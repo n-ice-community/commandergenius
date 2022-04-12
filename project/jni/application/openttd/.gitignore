@@ -1,4 +1,5 @@
 /openttd-build-*
+/staging-openttd-build-*
 /AndroidData/*.xz
 /data
 /openttd-pc
