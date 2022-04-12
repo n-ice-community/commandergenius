@@ -96,7 +96,14 @@ export ARCH=$1
 
 mkdir -p staging-openttd-$VER-$1
 
-cmake --build openttd-$VER-$1 --verbose && \
-  cmake --install openttd-$VER-$1 --prefix ./staging-openttd-$VER-$1 && \
-  cp staging-openttd-$VER-$1/games/libapplication.so libapplication-$1.so || \
-exit 1
+set -e
+
+cmake --build openttd-$VER-$1 --verbose;
+cmake --install openttd-$VER-$1 --prefix ./staging-openttd-$VER-$1;
+cp staging-openttd-$VER-$1/games/libapplication.so libapplication-$1.so;
+cp staging-openttd-$VER-$1/games/libapplication.so libapplication-$1.so;
+mkdir -p ./data
+cp -r staging-openttd-$VER-$1/share/games/application/* data/
+./pack-data.sh
+
+set +e
