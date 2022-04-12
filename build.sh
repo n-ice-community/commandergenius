@@ -1,5 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
+THIS_BUILD_DIR=$(dirname "$0")
 install_apk=false
 run_apk=false
 sign_apk=false
@@ -107,12 +108,12 @@ export BUILD_NUM_CPUS=$NCPU
 [ -z "$ANDROID_NDK_HOME" ] && export ANDROID_NDK_HOME="`which ndk-build | sed 's@/ndk-build@@'`"
 
 [ -x project/jni/application/src/AndroidPreBuild.sh ] && {
-	cd project/jni/application/src
+	pushd project/jni/application/src
 	./AndroidPreBuild.sh || { echo "AndroidPreBuild.sh returned with error" ; exit 1 ; }
-	cd ../../../..
+	popd
 }
 
-[ -n "`grep CustomBuildScript=y AndroidAppSettings.cfg`" ] && {
+grep -q 'CustomBuildScript=y' ./AndroidAppSettings.cfg && {
 	ndk-build -C project -j$NCPU V=1 CUSTOM_BUILD_SCRIPT_FIRST_PASS=1 NDK_APP_STRIP_MODE=none || exit 1
 	make -C project/jni/application -f CustomBuildScript.mk || exit 1
 }
@@ -122,9 +123,9 @@ ndk-build -C project -j$NCPU V=1 NDK_APP_STRIP_MODE=none && \
 	{	if $build_release ; then \
 			./gradlew assembleRelease || exit 1 ; \
 			[ '!' -x jni/application/src/AndroidPostBuild.sh ] || {
-				cd jni/application/src ; \
-				./AndroidPostBuild.sh `pwd`/../../../app/build/outputs/apk/release/app-release-unsigned.apk || exit 1 ; \
-				cd ../../.. ; \
+				pushd jni/application/src ; \
+				./AndroidPostBuild.sh ${THIS_BUILD_DIR}/project/app/build/outputs/apk/release/app-release-unsigned.apk || exit 1 ; \
+				popd ; \
 			} || exit 1 ; \
 			../copyAssets.sh pack-binaries app/build/outputs/apk/release/app-release-unsigned.apk ; \
 			rm -f app/build/outputs/apk/release/app-release.apk ; \
@@ -133,9 +134,9 @@ ndk-build -C project -j$NCPU V=1 NDK_APP_STRIP_MODE=none && \
 		else \
 			./gradlew assembleDebug || exit 1 ; \
 			[ '!' -x jni/application/src/AndroidPostBuild.sh ] || {
-				cd jni/application/src ; \
-				./AndroidPostBuild.sh `pwd`/../../../app/build/outputs/apk/debug/app-debug.apk || exit 1 ; \
-				cd ../../.. ; \
+				pushd jni/application/src ; \
+				./AndroidPostBuild.sh ${THIS_BUILD_DIR}/project/app/build/outputs/apk/debug/app-debug.apk || exit 1 ; \
+				popd ; \
 			} || exit 1 ; \
 			mkdir -p app/build/outputs/apk/release ; \
 			../copyAssets.sh pack-binaries app/build/outputs/apk/debug/app-debug.apk ; \
@@ -143,8 +144,8 @@ ndk-build -C project -j$NCPU V=1 NDK_APP_STRIP_MODE=none && \
 			zipalign -p 4 app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release.apk ; \
 			apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android app/build/outputs/apk/release/app-release.apk || exit 1 ; \
 		fi ; } && \
-	{	if $sign_apk; then cd .. && ./sign.sh && cd project ; else true ; fi ; } && \
-	{	if $sign_bundle; then cd .. && ./signBundle.sh && cd project ; else true ; fi ; } && \
+	{	if $sign_apk; then pushd .. && ./sign.sh && popd ; else true ; fi ; } && \
+	{	if $sign_bundle; then pushd .. && ./signBundle.sh && popd ; else true ; fi ; } && \
 	{	$install_apk && [ -n "`adb devices | tail -n +2`" ] && \
 		{	if $sign_apk; then \
 				APPNAME=`grep AppName ../AndroidAppSettings.cfg | sed 's/.*=//' | tr -d '"' | tr " '/" '---'` ; \

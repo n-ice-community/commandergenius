@@ -88,12 +88,15 @@ export ARCH=$1
 		-DGLOBAL_DIR="." \
 		-DHOST_BINARY_DIR=$LOCAL_PATH/build-tools \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-B openttd-$VER-$1 src
+        -DCMAKE_MAKE_PROGRAM=$(which ninja) \
+        -GNinja \
+		-B ./openttd-$VER-$1 -S ./src
 
 } || exit 1
 
-NCPU=8
-uname -s | grep -i "linux" > /dev/null && NCPU=`cat /proc/cpuinfo | grep -c -i processor`
+mkdir -p staging-openttd-$VER-$1
 
-make -C openttd-$VER-$1 -j$NCPU VERBOSE=1 STRIP='' && cp -f openttd-$VER-$1/libapplication.so libapplication-$1.so || exit 1
-
+cmake --build openttd-$VER-$1 --verbose && \
+  cmake --install openttd-$VER-$1 --prefix ./staging-openttd-$VER-$1 && \
+  cp staging-openttd-$VER-$1/games/libapplication.so libapplication-$1.so || \
+exit 1
