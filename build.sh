@@ -6,6 +6,22 @@ sign_apk=false
 sign_bundle=false
 build_release=true
 
+# Check environment before continuing
+if ! $(which adb arch zipalign apksigner jarsigner ndk-build java cmake > /dev/null); then
+    echo "One of the follow binaries is missing. Check your environment";
+    echo "adb arch zipalign apksigner jarsigner ndk-build java cmake";
+    exit 1;
+fi
+
+JAVA_MVERSION=$(java --version 2>&1 | awk 'NR == 1{print $2}' | awk -F . '{print $1}')
+if [ $JAVA_MVERSION -lt 11 ]; then
+    echo "Java version equal or above to 11 necessary.";
+    exit 2;
+    if [ $JAVA_MVERSION -gt 11 ]; then
+        echo "Java 11 version is strongly recomended.";
+    fi
+fi
+
 while getopts "sirqbh" OPT
 do
 	case $OPT in
