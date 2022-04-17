@@ -44,7 +44,7 @@ if [ "$#" -gt 0 ]; then
 	shift
 fi
 
-. ./AndroidAppSettings.cfg
+source ./AndroidAppSettings.cfg
 
 var=""
 
@@ -148,343 +148,344 @@ fi
 
 if [ -n "$CHANGED" ]; then
 cat /dev/null > AndroidAppSettings.cfg
-echo "# The application settings for Android libSDL port" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Specify application name (e.x. My Application)" >> AndroidAppSettings.cfg
-echo AppName=\"$AppName\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Specify reversed site name of application (e.x. com.mysite.myapp)" >> AndroidAppSettings.cfg
-echo AppFullName=$AppFullName >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application version code (integer)" >> AndroidAppSettings.cfg
-echo AppVersionCode=$AppVersionCode >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application user-visible version name (string)" >> AndroidAppSettings.cfg
-echo AppVersionName=\"$AppVersionName\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Specify path to download application data in zip archive in the form \"Description|URL|MirrorURL^Description2|URL2|MirrorURL2^...\"" >> AndroidAppSettings.cfg
-echo "# If you'll start Description with '!' symbol it will be enabled by default, '!!' will also hide the entry from the menu, so it cannot be disabled" >> AndroidAppSettings.cfg
-echo "# If the URL in in the form ':dir/file.dat:http://URL/' it will be downloaded as binary BLOB to the application dir and not unzipped" >> AndroidAppSettings.cfg
-echo "# If the URL does not contain 'http://' or 'https://', it is treated as file from 'project/jni/application/src/AndroidData' dir -" >> AndroidAppSettings.cfg
-echo "# these files are put inside .apk package by the build system" >> AndroidAppSettings.cfg
-echo "# You can specify Google Play expansion files in the form 'obb:main.12345' or 'obb:patch.12345' where 12345 is the app version for the obb file" >> AndroidAppSettings.cfg
-echo "# You can mount expansion files created with jobb tool if you put 'mnt:main.12345' or 'mnt:patch.12345'" >> AndroidAppSettings.cfg
-echo "# The mount directory will be returned by calling getenv(\"ANDROID_OBB_MOUNT_DIR\")" >> AndroidAppSettings.cfg
-echo "# Android app bundles do not support .obb files, they use asset packs instead." >> AndroidAppSettings.cfg
-echo "# This app project includes one pre-configured install-time asset pack." >> AndroidAppSettings.cfg
-echo "# To put your data into asset pack, copy it to the directory AndroidData/assetpack" >> AndroidAppSettings.cfg
-echo "# and run changeAppSettings.sh. The asset pack zip archive will be returned by" >> AndroidAppSettings.cfg
-echo "# getenv(\"ANDROID_ASSET_PACK_PATH\"), this call will return NULL if the asset pack is not installed." >> AndroidAppSettings.cfg
-echo "# You can put \"assetpack\" keyword to AppDataDownloadUrl, the code will check" >> AndroidAppSettings.cfg
-echo "# if the asset pack is installed and will not download the data from other URLs." >> AndroidAppSettings.cfg
-echo "# You can extract files from the asset pack the same way you extract files from the app assets." >> AndroidAppSettings.cfg
-echo "# You can use .zip.xz archives for better compression, but you need to add 'lzma' to CompiledLibraries" >> AndroidAppSettings.cfg
-echo "# Generate .zip.xz files like this: zip -0 -r data.zip your-data/* ; xz -8 data.zip" >> AndroidAppSettings.cfg
-echo AppDataDownloadUrl=\"$AppDataDownloadUrl\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Reset SDL config when updating application to the new version (y) / (n)" >> AndroidAppSettings.cfg
-echo ResetSdlConfigForThisVersion=$ResetSdlConfigForThisVersion >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Delete application data files when upgrading (specify file/dir paths separated by spaces)" >> AndroidAppSettings.cfg
-echo DeleteFilesOnUpgrade=\"$DeleteFilesOnUpgrade\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Here you may type readme text, which will be shown during startup. Format is:" >> AndroidAppSettings.cfg
-echo "# Text in English, use \\\\\\\\\\\\\\\\n to separate lines (that's four backslashes)^de:Text in Deutsch^ru:Text in Russian^button:Button that will open some URL:http://url-to-open/" >> AndroidAppSettings.cfg
-echo ReadmeText=\'$ReadmeText\' | sed 's/\\\\n/\\\\\\\\n/g' >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# libSDL version to use (1.2/2)" >> AndroidAppSettings.cfg
-echo LibSdlVersion=$LibSdlVersion >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Specify screen orientation: (v)ertical/(p)ortrait or (h)orizontal/(l)andscape" >> AndroidAppSettings.cfg
-echo ScreenOrientation=$ScreenOrientation >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Video color depth - 16 BPP is the fastest and supported for all modes, 24 bpp is supported only" >> AndroidAppSettings.cfg
-echo "# with SwVideoMode=y, SDL_OPENGL mode supports everything. (16)/(24)/(32)" >> AndroidAppSettings.cfg
-echo VideoDepthBpp=$VideoDepthBpp >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Enable OpenGL depth buffer (needed only for 3-d applications, small speed decrease) (y) or (n)" >> AndroidAppSettings.cfg
-echo NeedDepthBuffer=$NeedDepthBuffer >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Enable OpenGL stencil buffer (needed only for 3-d applications, small speed decrease) (y) or (n)" >> AndroidAppSettings.cfg
-echo NeedStencilBuffer=$NeedStencilBuffer >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Use GLES 2.x context" >> AndroidAppSettings.cfg
-echo "# you need this option only if you're developing 3-d app (y) or (n)" >> AndroidAppSettings.cfg
-echo NeedGles2=$NeedGles2 >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Use GLES 3.x context" >> AndroidAppSettings.cfg
-echo "# you need this option only if you're developing 3-d app (y) or (n)" >> AndroidAppSettings.cfg
-echo NeedGles3=$NeedGles3 >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Use gl4es library for provide OpenGL 1.x functionality to OpenGL ES accelerated cards (y) or (n)" >> AndroidAppSettings.cfg
-echo UseGl4es=$UseGl4es >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application uses software video buffer - you're calling SDL_SetVideoMode() without SDL_HWSURFACE and without SDL_OPENGL," >> AndroidAppSettings.cfg
-echo "# this will allow small speed optimization. Enable this even when you're using SDL_HWSURFACE. (y) or (n)" >> AndroidAppSettings.cfg
-echo SwVideoMode=$SwVideoMode >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application video output will be resized to fit into native device screen (y)/(n)" >> AndroidAppSettings.cfg
-echo SdlVideoResize=$SdlVideoResize >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application resizing will keep 4:3 aspect ratio, with black bars at sides (y)/(n)" >> AndroidAppSettings.cfg
-echo SdlVideoResizeKeepAspect=$SdlVideoResizeKeepAspect >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Do not allow device to sleep when the application is in foreground, set this for video players or apps which use accelerometer" >> AndroidAppSettings.cfg
-echo InhibitSuspend=$InhibitSuspend >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Create Android service, so the app is less likely to be killed while in background" >> AndroidAppSettings.cfg
-echo CreateService=$CreateService >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application does not call SDL_Flip() or SDL_UpdateRects() appropriately, or draws from non-main thread -" >> AndroidAppSettings.cfg
-echo "# enabling the compatibility mode will force screen update every 100 milliseconds, which is laggy and inefficient (y) or (n)" >> AndroidAppSettings.cfg
-echo CompatibilityHacksForceScreenUpdate=$CompatibilityHacksForceScreenUpdate >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application does not call SDL_Flip() or SDL_UpdateRects() after mouse click (ScummVM and all Amiga emulators do that) -" >> AndroidAppSettings.cfg
-echo "# force screen update by moving mouse cursor a little after each click (y) or (n)" >> AndroidAppSettings.cfg
-echo CompatibilityHacksForceScreenUpdateMouseClick=$CompatibilityHacksForceScreenUpdateMouseClick >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application initializes SDL audio/video inside static constructors (which is bad, you won't be able to run ndk-gdb) (y)/(n)" >> AndroidAppSettings.cfg
-echo CompatibilityHacksStaticInit=$CompatibilityHacksStaticInit >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# On-screen Android soft text input emulates hardware keyboard, this will only work with Hackers Keyboard app (y)/(n)" >> AndroidAppSettings.cfg
-echo CompatibilityHacksTextInputEmulatesHwKeyboard=$CompatibilityHacksTextInputEmulatesHwKeyboard >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Built-in text input keyboards with custom layouts for emulators, requires CompatibilityHacksTextInputEmulatesHwKeyboard=y" >> AndroidAppSettings.cfg
-echo "# 0 or empty - standard Android keyboard" >> AndroidAppSettings.cfg
-echo "# 1 - Simple QWERTY keyboard, no function keys, no arrow keys" >> AndroidAppSettings.cfg
-echo "# 2 - Commodore 64 keyboard" >> AndroidAppSettings.cfg
-echo "# 3 - Amiga keyboard" >> AndroidAppSettings.cfg
-echo "# 4 - Atari800 keyboard" >> AndroidAppSettings.cfg
-echo TextInputKeyboard=$TextInputKeyboard >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Hack for broken devices: prevent audio chopping, by sleeping a bit after pushing each audio chunk (y)/(n)" >> AndroidAppSettings.cfg
-echo CompatibilityHacksPreventAudioChopping=$CompatibilityHacksPreventAudioChopping >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Hack for broken apps: application ignores audio buffer size returned by SDL (y)/(n)" >> AndroidAppSettings.cfg
-echo CompatibilityHacksAppIgnoresAudioBufferSize=$CompatibilityHacksAppIgnoresAudioBufferSize >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Hack for VCMI: preload additional shared libraries before aplication start" >> AndroidAppSettings.cfg
-echo CompatibilityHacksAdditionalPreloadedSharedLibraries=\"$CompatibilityHacksAdditionalPreloadedSharedLibraries\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Hack for Free Heroes 2, which redraws the screen inside SDL_PumpEvents(): slow and compatible SDL event queue -" >> AndroidAppSettings.cfg
-echo "# do not use it with accelerometer/gyroscope, or your app may freeze at random (y)/(n)" >> AndroidAppSettings.cfg
-echo CompatibilityHacksSlowCompatibleEventQueue=$CompatibilityHacksSlowCompatibleEventQueue >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Save and restore OpenGL state when drawing on-screen keyboard for apps that use SDL_OPENGL" >> AndroidAppSettings.cfg
-echo CompatibilityHacksTouchscreenKeyboardSaveRestoreOpenGLState=$CompatibilityHacksTouchscreenKeyboardSaveRestoreOpenGLState >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application uses SDL_UpdateRects() properly, and does not draw in any region outside those rects." >> AndroidAppSettings.cfg
-echo "# This improves drawing speed, but I know only one application that does that, and it's written by me (y)/(n)" >> AndroidAppSettings.cfg
-echo CompatibilityHacksProperUsageOfSDL_UpdateRects=$CompatibilityHacksProperUsageOfSDL_UpdateRects >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application uses mouse (y) or (n), this will show mouse emulation dialog to the user" >> AndroidAppSettings.cfg
-echo AppUsesMouse=$AppUsesMouse >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application needs two-button mouse, will also enable advanced point-and-click features (y) or (n)" >> AndroidAppSettings.cfg
-echo AppNeedsTwoButtonMouse=$AppNeedsTwoButtonMouse >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Right mouse button can do long-press/drag&drop action, necessary for some games (y) or (n)" >> AndroidAppSettings.cfg
-echo "# If you disable it, swiping with two fingers will send mouse wheel events" >> AndroidAppSettings.cfg
-echo RightMouseButtonLongPress=$RightMouseButtonLongPress >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Show SDL mouse cursor, for applications that do not draw cursor at all (y) or (n)" >> AndroidAppSettings.cfg
-echo ShowMouseCursor=$ShowMouseCursor >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Screen follows mouse cursor, when it's covered by soft keyboard, this works only in software video mode (y) or (n)" >> AndroidAppSettings.cfg
-echo ScreenFollowsMouse=$ScreenFollowsMouse >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Generate more touch events, by default SDL generates one event per one video frame, this is useful for drawing apps (y) or (n)" >> AndroidAppSettings.cfg
-echo GenerateSubframeTouchEvents=$GenerateSubframeTouchEvents >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Force relative (laptop) mouse movement mode, useful when both on-screen keyboard and mouse are needed (y) or (n)" >> AndroidAppSettings.cfg
-echo ForceRelativeMouseMode=$ForceRelativeMouseMode >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Show on-screen dpad/joystick, that will act as arrow keys (y) or (n)" >> AndroidAppSettings.cfg
-echo AppNeedsArrowKeys=$AppNeedsArrowKeys >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# On-screen dpad/joystick will appear under finger when it touches the screen (y) or (n)" >> AndroidAppSettings.cfg
-echo "# Joystick always follows finger, so moving mouse requires touching the screen with other finger" >> AndroidAppSettings.cfg
-echo FloatingScreenJoystick=$FloatingScreenJoystick >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application needs text input (y) or (n), enables button for text input on screen" >> AndroidAppSettings.cfg
-echo AppNeedsTextInput=$AppNeedsTextInput >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application uses joystick (y) or (n), the on-screen DPAD will be used as joystick 0 axes 0-1" >> AndroidAppSettings.cfg
-echo "# This will disable AppNeedsArrowKeys option" >> AndroidAppSettings.cfg
-echo AppUsesJoystick=$AppUsesJoystick >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application uses second on-screen joystick, as SDL joystick 0 axes 2-3 (y)/(n)" >> AndroidAppSettings.cfg
-echo AppUsesSecondJoystick=$AppUsesSecondJoystick >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application uses third on-screen joystick, as SDL joystick 0 axes 20-21 (y)/(n)" >> AndroidAppSettings.cfg
-echo AppUsesThirdJoystick=$AppUsesThirdJoystick >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application uses accelerometer (y) or (n), the accelerometer will be used as joystick 1 axes 0-1 and 5-7" >> AndroidAppSettings.cfg
-echo AppUsesAccelerometer=$AppUsesAccelerometer >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application uses gyroscope (y) or (n), the gyroscope will be used as joystick 1 axes 2-4" >> AndroidAppSettings.cfg
-echo AppUsesGyroscope=$AppUsesGyroscope >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application uses orientation sensor (y) or (n), reported as joystick 1 axes 8-10" >> AndroidAppSettings.cfg
-echo AppUsesOrientationSensor=$AppUsesOrientationSensor >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Use gyroscope to move mouse cursor (y) or (n), it eats battery, and can be disabled in settings, do not use with AppUsesGyroscope setting" >> AndroidAppSettings.cfg
-echo MoveMouseWithGyroscope=$MoveMouseWithGyroscope >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application uses multitouch (y) or (n), multitouch events are passed as SDL_JOYBALLMOTION events for the joystick 0" >> AndroidAppSettings.cfg
-echo AppUsesMultitouch=$AppUsesMultitouch >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application records audio (it will use any available source, such a s microphone)" >> AndroidAppSettings.cfg
-echo "# API is defined in file SDL_android.h: int SDL_ANDROID_OpenAudioRecording(SDL_AudioSpec *spec); void SDL_ANDROID_CloseAudioRecording(void);" >> AndroidAppSettings.cfg
-echo "# This option will add additional permission to Android manifest (y)/(n)" >> AndroidAppSettings.cfg
-echo AppRecordsAudio=$AppRecordsAudio >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application needs read/write access SD card. Always disable it, unless you want to access user photos and downloads. (y) / (n)" >> AndroidAppSettings.cfg
-echo AccessSdCard=$AccessSdCard >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application needs to read it's own OBB file. Enable this if you are using Play Store expansion files. (y) / (n)" >> AndroidAppSettings.cfg
-echo ReadObbFile=$ReadObbFile >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application needs Internet access. If you disable it, you'll have to bundle all your data files inside .apk (y) / (n)" >> AndroidAppSettings.cfg
-echo AccessInternet=$AccessInternet >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Immersive mode - Android will hide on-screen Home/Back keys. Looks bad if you invoke Android keyboard. (y) / (n)" >> AndroidAppSettings.cfg
-echo ImmersiveMode=$ImmersiveMode >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Draw in the display cutout area. (y) / (n)" >> AndroidAppSettings.cfg
-echo DrawInDisplayCutout=$DrawInDisplayCutout >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Hide Android system mouse cursor image when USB mouse is attached (y) or (n) - the app must draw it's own mouse cursor" >> AndroidAppSettings.cfg
-echo HideSystemMousePointer=$HideSystemMousePointer >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application implements Android-specific routines to put to background, and will not draw anything to screen" >> AndroidAppSettings.cfg
-echo "# between SDL_ACTIVEEVENT lost / gained notifications - you should check for them" >> AndroidAppSettings.cfg
-echo "# rigth after SDL_Flip(), if (n) then SDL_Flip() will block till app in background (y) or (n)" >> AndroidAppSettings.cfg
-echo "# This option is reported to be buggy, sometimes failing to restore video state" >> AndroidAppSettings.cfg
-echo NonBlockingSwapBuffers=$NonBlockingSwapBuffers >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Redefine common hardware keys to SDL keysyms" >> AndroidAppSettings.cfg
-echo "# BACK hardware key is available on all devices, MENU is available on pre-ICS devices, other keys may be absent" >> AndroidAppSettings.cfg
-echo "# SEARCH and CALL by default return same keycode as DPAD_CENTER - one of those keys is available on most devices" >> AndroidAppSettings.cfg
-echo "# Use word NO_REMAP if you want to preserve native functionality for certain key (volume keys are 3-rd and 4-th)" >> AndroidAppSettings.cfg
-echo "# Keys: TOUCHSCREEN (works only when AppUsesMouse=n), DPAD_CENTER/SEARCH, VOLUMEUP, VOLUMEDOWN, MENU, BACK, CAMERA" >> AndroidAppSettings.cfg
-echo RedefinedKeys=\"$RedefinedKeys\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Number of virtual keyboard keys - currently 12 keys is the maximum" >> AndroidAppSettings.cfg
-echo AppTouchscreenKeyboardKeysAmount=$AppTouchscreenKeyboardKeysAmount >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Define SDL keysyms for multitouch gestures - pinch-zoom in, pinch-zoom out, rotate left, rotate right" >> AndroidAppSettings.cfg
-echo RedefinedKeysScreenGestures=\"$RedefinedKeysScreenGestures\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Redefine on-screen keyboard keys to SDL keysyms - currently 12 keys is the maximum" >> AndroidAppSettings.cfg
-echo RedefinedKeysScreenKb=\"$RedefinedKeysScreenKb\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Names for on-screen keyboard keys, such as Fire, Jump, Run etc, separated by spaces, they are used in SDL config menu" >> AndroidAppSettings.cfg
-echo RedefinedKeysScreenKbNames=\"$RedefinedKeysScreenKbNames\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# On-screen keys theme" >> AndroidAppSettings.cfg
-echo "# 0 = Ultimate Droid by Sean Stieber (green, with cross joystick)" >> AndroidAppSettings.cfg
-echo "# 1 = Simple Theme by Beholder (white, with cross joystick)" >> AndroidAppSettings.cfg
-echo "# 2 = Sun by Sirea (yellow, with round joystick)" >> AndroidAppSettings.cfg
-echo "# 3 = Keen by Gerstrong (multicolor, with round joystick)" >> AndroidAppSettings.cfg
-echo "# 4 = Retro by Santiago Radeff (red/white, with cross joystick)" >> AndroidAppSettings.cfg
-echo "# 5 = GameBoy from RetroArch" >> AndroidAppSettings.cfg
-echo "# 6 = PlayStation from RetroArch" >> AndroidAppSettings.cfg
-echo "# 7 = SuperNintendo from RetroArch" >> AndroidAppSettings.cfg
-echo "# 8 = DualShock from RetroArch" >> AndroidAppSettings.cfg
-echo "# 9 = Nintendo64 from RetroArch" >> AndroidAppSettings.cfg
-echo TouchscreenKeysTheme=$TouchscreenKeysTheme >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Redefine gamepad keys to SDL keysyms, button order is:" >> AndroidAppSettings.cfg
-echo "# A B X Y L1 R1 L2 R2 LThumb RThumb Start Select Up Down Left Right LThumbUp LThumbDown LThumbLeft LThumbRight RThumbUp RThumbDown RThumbLeft RThumbRight" >> AndroidAppSettings.cfg
-echo RedefinedKeysGamepad=\"$RedefinedKeysGamepad\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Redefine keys for the second gamepad, same as the first gamepad if not set:" >> AndroidAppSettings.cfg
-echo RedefinedKeysSecondGamepad=\"$RedefinedKeysSecondGamepad\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Redefine keys for the third gamepad, same as the first gamepad if not set:" >> AndroidAppSettings.cfg
-echo RedefinedKeysThirdGamepad=\"$RedefinedKeysThirdGamepad\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Redefine keys for the fourth gamepad, same as the first gamepad if not set:" >> AndroidAppSettings.cfg
-echo RedefinedKeysFourthGamepad=\"$RedefinedKeysFourthGamepad\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# How long to show startup menu button, in msec, 0 to disable startup menu" >> AndroidAppSettings.cfg
-echo StartupMenuButtonTimeout=$StartupMenuButtonTimeout >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Menu items to hide from startup menu, available menu items (SDL 1.2 only):" >> AndroidAppSettings.cfg
-echo "# $MenuOptionsAvailable" >> AndroidAppSettings.cfg
-echo HiddenMenuOptions=\'$HiddenMenuOptions\' >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Menu items to show at startup - this is Java code snippet, leave empty for default" >> AndroidAppSettings.cfg
-echo "# $FirstStartMenuOptionsDefault" >> AndroidAppSettings.cfg
-echo "# Available menu items:" >> AndroidAppSettings.cfg
-echo "# $MenuOptionsAvailable" >> AndroidAppSettings.cfg
-echo FirstStartMenuOptions=\'$FirstStartMenuOptions\' >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Minimum amount of RAM application requires, in Mb, SDL will print warning to user if it's lower" >> AndroidAppSettings.cfg
-echo AppMinimumRAM=$AppMinimumRAM >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# GCC version, or 'clang' for CLANG" >> AndroidAppSettings.cfg
-echo NDK_TOOLCHAIN_VERSION=$NDK_TOOLCHAIN_VERSION >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Android platform version." >> AndroidAppSettings.cfg
-echo "# android-16 = Android 4.1, the earliest supported version in NDK r18." >> AndroidAppSettings.cfg
-echo "# android-18 = Android 4.3, the first version supporting GLES3." >> AndroidAppSettings.cfg
-echo "# android-21 = Android 5.1, the first version with SO_REUSEPORT defined." >> AndroidAppSettings.cfg
-echo APP_PLATFORM=$APP_PLATFORM >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Specify architectures to compile, 'all' or 'y' to compile for all architectures." >> AndroidAppSettings.cfg
-echo "# Available architectures: armeabi-v7a arm64-v8a x86 x86_64" >> AndroidAppSettings.cfg
-echo MultiABI=\'$MultiABI\' >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Optional shared libraries to compile - removing some of them will save space" >> AndroidAppSettings.cfg
-echo "# MP3 patents are expired, but libmad license is GPL, not LGPL" >> AndroidAppSettings.cfg
-grep 'Available' project/jni/SettingsTemplate.mk >> AndroidAppSettings.cfg
-echo CompiledLibraries=\"$CompiledLibraries\" >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application uses custom build script AndroidBuild.sh instead of Android.mk (y) or (n)" >> AndroidAppSettings.cfg
-echo CustomBuildScript=$CustomBuildScript >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Aditional CFLAGS for application" >> AndroidAppSettings.cfg
-echo AppCflags=\'$AppCflags\' >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Aditional C++-specific compiler flags for application, added after AppCflags" >> AndroidAppSettings.cfg
-echo AppCppflags=\'$AppCppflags\' >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Additional LDFLAGS for application" >> AndroidAppSettings.cfg
-echo AppLdflags=\'$AppLdflags\' >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# If application has headers with the same name as system headers, this option tries to fix compiler flags to make it compilable" >> AndroidAppSettings.cfg
-echo AppOverlapsSystemHeaders=$AppOverlapsSystemHeaders >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Build only following subdirs (empty will build all dirs, ignored with custom script)" >> AndroidAppSettings.cfg
-echo AppSubdirsBuild=\'$AppSubdirsBuild\' >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Exclude these files from build" >> AndroidAppSettings.cfg
-echo AppBuildExclude=\'$AppBuildExclude\' >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Application command line parameters, including app name as 0-th param" >> AndroidAppSettings.cfg
-echo AppCmdline=\'$AppCmdline\' >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Screen size is used by Google Play to prevent an app to be installed on devices with smaller screens" >> AndroidAppSettings.cfg
-echo "# Minimum screen size that application supports: (s)mall / (m)edium / (l)arge" >> AndroidAppSettings.cfg
-echo MinimumScreenSize=$MinimumScreenSize >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Your AdMob Publisher ID, (n) if you don't want advertisements" >> AndroidAppSettings.cfg
-echo AdmobPublisherId=$AdmobPublisherId >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Your AdMob test device ID, to receive a test ad" >> AndroidAppSettings.cfg
-echo AdmobTestDeviceId=$AdmobTestDeviceId >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Your AdMob banner size (BANNER/FULL_BANNER/LEADERBOARD/MEDIUM_RECTANGLE/SMART_BANNER/WIDE_SKYSCRAPER/FULL_WIDTH:Height/Width:AUTO_HEIGHT/Width:Height)" >> AndroidAppSettings.cfg
-echo AdmobBannerSize=$AdmobBannerSize >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# Google Play Game Services application ID, required for cloud saves to work" >> AndroidAppSettings.cfg
-echo GooglePlayGameServicesId=$GooglePlayGameServicesId >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
-echo "# The app will open files with following extension, file path will be added to commandline params" >> AndroidAppSettings.cfg
-echo AppOpenFileExtension=\'$AppOpenFileExtension\' >> AndroidAppSettings.cfg
-echo >> AndroidAppSettings.cfg
+cat <<EOF >./AndroidAppSettings.cfg
+# The application settings for Android libSDL port
+
+# Specify application name (e.x. My Application)
+AppName="$AppName"
+
+# Specify reversed site name of application (e.x. com.mysite.myapp)
+AppFullName=$AppFullName
+
+# Application version code (integer)
+AppVersionCode=$AppVersionCode
+
+# Application user-visible version name (string)
+AppVersionName="$AppVersionName"
+
+# Specify path to download application data in zip archive in the form "Description|URL|MirrorURL^Description2|URL2|MirrorURL2^...
+# If you'll start Description with '!' symbol it will be enabled by default, '!!' will also hide the entry from the menu, so it cannot be disabled
+# If the URL in in the form ':dir/file.dat:http://URL/' it will be downloaded as binary BLOB to the application dir and not unzipped
+# If the URL does not contain 'http://' or 'https://', it is treated as file from 'project/jni/application/src/AndroidData' dir -
+# these files are put inside .apk package by the build system
+# You can specify Google Play expansion files in the form 'obb:main.12345' or 'obb:patch.12345' where 12345 is the app version for the obb file
+# You can mount expansion files created with jobb tool if you put 'mnt:main.12345' or 'mnt:patch.12345'
+# The mount directory will be returned by calling getenv("ANDROID_OBB_MOUNT_DIR")
+# Android app bundles do not support .obb files, they use asset packs instead.
+# This app project includes one pre-configured install-time asset pack.
+# To put your data into asset pack, copy it to the directory AndroidData/assetpack
+# and run changeAppSettings.sh. The asset pack zip archive will be returned by
+# getenv("ANDROID_ASSET_PACK_PATH"), this call will return NULL if the asset pack is not installed.
+# You can put "assetpack" keyword to AppDataDownloadUrl, the code will check
+# if the asset pack is installed and will not download the data from other URLs.
+# You can extract files from the asset pack the same way you extract files from the app assets.
+# You can use .zip.xz archives for better compression, but you need to add 'lzma' to CompiledLibraries
+# Generate .zip.xz files like this: zip -0 -r data.zip your-data/* ; xz -8 data.zip
+AppDataDownloadUrl="$AppDataDownloadUrl"
+
+# Reset SDL config when updating application to the new version (y) / (n)
+ResetSdlConfigForThisVersion=$ResetSdlConfigForThisVersion
+
+# Delete application data files when upgrading (specify file/dir paths separated by spaces)
+DeleteFilesOnUpgrade="$DeleteFilesOnUpgrade"
+
+# Here you may type readme text, which will be shown during startup. Format is:
+# Text in English, use \\\\n to separate lines (that's four backslashes)^de:Text in Deutsch^ru:Text in Russian^button:Button that will open some URL:http://url-to-open/
+ReadmeText='$ReadmeText' | sed 's/\\\\n/\\\\\\\\n/g'
+
+# libSDL version to use (1.2/2)
+LibSdlVersion=$LibSdlVersion
+
+# Specify screen orientation: (v)ertical/(p)ortrait or (h)orizontal/(l)andscape
+ScreenOrientation=$ScreenOrientation
+
+# Video color depth - 16 BPP is the fastest and supported for all modes, 24 bpp is supported only
+# with SwVideoMode=y, SDL_OPENGL mode supports everything. (16)/(24)/(32)
+VideoDepthBpp=$VideoDepthBpp
+
+# Enable OpenGL depth buffer (needed only for 3-d applications, small speed decrease) (y) or (n)
+NeedDepthBuffer=$NeedDepthBuffer
+
+# Enable OpenGL stencil buffer (needed only for 3-d applications, small speed decrease) (y) or (n)
+NeedStencilBuffer=$NeedStencilBuffer
+
+# Use GLES 2.x context
+# you need this option only if you're developing 3-d app (y) or (n)
+NeedGles2=$NeedGles2
+
+# Use GLES 3.x context
+# you need this option only if you're developing 3-d app (y) or (n)
+NeedGles3=$NeedGles3
+
+# Use gl4es library for provide OpenGL 1.x functionality to OpenGL ES accelerated cards (y) or (n)
+UseGl4es=$UseGl4es
+
+# Application uses software video buffer - you're calling SDL_SetVideoMode() without SDL_HWSURFACE and without SDL_OPENGL,
+# this will allow small speed optimization. Enable this even when you're using SDL_HWSURFACE. (y) or (n)
+SwVideoMode=$SwVideoMode
+
+# Application video output will be resized to fit into native device screen (y)/(n)
+SdlVideoResize=$SdlVideoResize
+
+# Application resizing will keep 4:3 aspect ratio, with black bars at sides (y)/(n)
+SdlVideoResizeKeepAspect=$SdlVideoResizeKeepAspect
+
+Do not allow device to sleep when the application is in foreground, set this for video players or apps which use accelerometer
+InhibitSuspend=$InhibitSuspend
+
+# Create Android service, so the app is less likely to be killed while in background
+CreateService=$CreateService
+
+# Application does not call SDL_Flip() or SDL_UpdateRects() appropriately, or draws from non-main thread -
+# enabling the compatibility mode will force screen update every 100 milliseconds, which is laggy and inefficient (y) or (n)
+CompatibilityHacksForceScreenUpdate=$CompatibilityHacksForceScreenUpdate
+
+# Application does not call SDL_Flip() or SDL_UpdateRects() after mouse click (ScummVM and all Amiga emulators do that) -
+# force screen update by moving mouse cursor a little after each click (y) or (n)
+CompatibilityHacksForceScreenUpdateMouseClick=$CompatibilityHacksForceScreenUpdateMouseClick
+
+# Application initializes SDL audio/video inside static constructors (which is bad, you won't be able to run ndk-gdb) (y)/(n)
+CompatibilityHacksStaticInit=$CompatibilityHacksStaticInit
+
+# On-screen Android soft text input emulates hardware keyboard, this will only work with Hackers Keyboard app (y)/(n)
+CompatibilityHacksTextInputEmulatesHwKeyboard=$CompatibilityHacksTextInputEmulatesHwKeyboard
+
+# Built-in text input keyboards with custom layouts for emulators, requires CompatibilityHacksTextInputEmulatesHwKeyboard=y
+# 0 or empty - standard Android keyboard
+# 1 - Simple QWERTY keyboard, no function keys, no arrow keys
+# 2 - Commodore 64 keyboard
+# 3 - Amiga keyboard
+# 4 - Atari800 keyboard
+TextInputKeyboard=$TextInputKeyboard
+
+# Hack for broken devices: prevent audio chopping, by sleeping a bit after pushing each audio chunk (y)/(n)
+CompatibilityHacksPreventAudioChopping=$CompatibilityHacksPreventAudioChopping
+
+# Hack for broken apps: application ignores audio buffer size returned by SDL (y)/(n)
+CompatibilityHacksAppIgnoresAudioBufferSize=$CompatibilityHacksAppIgnoresAudioBufferSize
+
+# Hack for VCMI: preload additional shared libraries before aplication start
+CompatibilityHacksAdditionalPreloadedSharedLibraries="$CompatibilityHacksAdditionalPreloadedSharedLibraries"
+
+# Hack for Free Heroes 2, which redraws the screen inside SDL_PumpEvents(): slow and compatible SDL event queue -
+# do not use it with accelerometer/gyroscope, or your app may freeze at random (y)/(n)
+CompatibilityHacksSlowCompatibleEventQueue=$CompatibilityHacksSlowCompatibleEventQueue
+
+# Save and restore OpenGL state when drawing on-screen keyboard for apps that use SDL_OPENGL
+CompatibilityHacksTouchscreenKeyboardSaveRestoreOpenGLState=$CompatibilityHacksTouchscreenKeyboardSaveRestoreOpenGLState
+
+# Application uses SDL_UpdateRects() properly, and does not draw in any region outside those rects.
+# This improves drawing speed, but I know only one application that does that, and it's written by me (y)/(n)
+CompatibilityHacksProperUsageOfSDL_UpdateRects=$CompatibilityHacksProperUsageOfSDL_UpdateRects
+
+# Application uses mouse (y) or (n), this will show mouse emulation dialog to the user
+AppUsesMouse=$AppUsesMouse
+
+# Application needs two-button mouse, will also enable advanced point-and-click features (y) or (n)
+AppNeedsTwoButtonMouse=$AppNeedsTwoButtonMouse
+
+# Right mouse button can do long-press/drag&drop action, necessary for some games (y) or (n)
+# If you disable it, swiping with two fingers will send mouse wheel events
+RightMouseButtonLongPress=$RightMouseButtonLongPress
+
+# Show SDL mouse cursor, for applications that do not draw cursor at all (y) or (n)
+ShowMouseCursor=$ShowMouseCursor
+
+# Screen follows mouse cursor, when it's covered by soft keyboard, this works only in software video mode (y) or (n)
+ScreenFollowsMouse=$ScreenFollowsMouse
+
+# Generate more touch events, by default SDL generates one event per one video frame, this is useful for drawing apps (y) or (n)
+GenerateSubframeTouchEvents=$GenerateSubframeTouchEvents
+
+# Force relative (laptop) mouse movement mode, useful when both on-screen keyboard and mouse are needed (y) or (n)
+ForceRelativeMouseMode=$ForceRelativeMouseMode
+
+# Show on-screen dpad/joystick, that will act as arrow keys (y) or (n)
+AppNeedsArrowKeys=$AppNeedsArrowKeys
+
+# On-screen dpad/joystick will appear under finger when it touches the screen (y) or (n)
+# Joystick always follows finger, so moving mouse requires touching the screen with other finger
+FloatingScreenJoystick=$FloatingScreenJoystick
+
+# Application needs text input (y) or (n), enables button for text input on screen
+AppNeedsTextInput=$AppNeedsTextInput
+
+# Application uses joystick (y) or (n), the on-screen DPAD will be used as joystick 0 axes 0-1
+# This will disable AppNeedsArrowKeys option
+AppUsesJoystick=$AppUsesJoystick
+
+# Application uses second on-screen joystick, as SDL joystick 0 axes 2-3 (y)/(n)
+AppUsesSecondJoystick=$AppUsesSecondJoystick
+
+# Application uses third on-screen joystick, as SDL joystick 0 axes 20-21 (y)/(n)
+AppUsesThirdJoystick=$AppUsesThirdJoystick
+
+# Application uses accelerometer (y) or (n), the accelerometer will be used as joystick 1 axes 0-1 and 5-7
+AppUsesAccelerometer=$AppUsesAccelerometer
+
+# Application uses gyroscope (y) or (n), the gyroscope will be used as joystick 1 axes 2-4
+AppUsesGyroscope=$AppUsesGyroscope
+
+# Application uses orientation sensor (y) or (n), reported as joystick 1 axes 8-10
+AppUsesOrientationSensor=$AppUsesOrientationSensor
+
+# Use gyroscope to move mouse cursor (y) or (n), it eats battery, and can be disabled in settings, do not use with AppUsesGyroscope setting
+MoveMouseWithGyroscope=$MoveMouseWithGyroscope
+
+# Application uses multitouch (y) or (n), multitouch events are passed as SDL_JOYBALLMOTION events for the joystick 0
+AppUsesMultitouch=$AppUsesMultitouch
+
+# Application records audio (it will use any available source, such a s microphone)
+# API is defined in file SDL_android.h: int SDL_ANDROID_OpenAudioRecording(SDL_AudioSpec *spec); void SDL_ANDROID_CloseAudioRecording(void);
+# This option will add additional permission to Android manifest (y)/(n)
+AppRecordsAudio=$AppRecordsAudio
+
+# Application needs read/write access SD card. Always disable it, unless you want to access user photos and downloads. (y) / (n)
+AccessSdCard=$AccessSdCard
+
+# Application needs to read it's own OBB file. Enable this if you are using Play Store expansion files. (y) / (n)
+ReadObbFile=$ReadObbFile
+
+# Application needs Internet access. If you disable it, you'll have to bundle all your data files inside .apk (y) / (n)
+AccessInternet=$AccessInternet
+
+# Immersive mode - Android will hide on-screen Home/Back keys. Looks bad if you invoke Android keyboard. (y) / (n)
+ImmersiveMode=$ImmersiveMode
+
+# Draw in the display cutout area. (y) / (n)
+DrawInDisplayCutout=$DrawInDisplayCutout
+
+# Hide Android system mouse cursor image when USB mouse is attached (y) or (n) - the app must draw it's own mouse cursor
+HideSystemMousePointer=$HideSystemMousePointer
+
+# Application implements Android-specific routines to put to background, and will not draw anything to screen
+# between SDL_ACTIVEEVENT lost / gained notifications - you should check for them
+# rigth after SDL_Flip(), if (n) then SDL_Flip() will block till app in background (y) or (n)
+# This option is reported to be buggy, sometimes failing to restore video state
+NonBlockingSwapBuffers=$NonBlockingSwapBuffers
+
+# Redefine common hardware keys to SDL keysyms
+# BACK hardware key is available on all devices, MENU is available on pre-ICS devices, other keys may be absent
+# SEARCH and CALL by default return same keycode as DPAD_CENTER - one of those keys is available on most devices
+# Use word NO_REMAP if you want to preserve native functionality for certain key (volume keys are 3-rd and 4-th)
+# Keys: TOUCHSCREEN (works only when AppUsesMouse=n), DPAD_CENTER/SEARCH, VOLUMEUP, VOLUMEDOWN, MENU, BACK, CAMERA
+RedefinedKeys="$RedefinedKeys"
+
+# Number of virtual keyboard keys - currently 12 keys is the maximum
+AppTouchscreenKeyboardKeysAmount=$AppTouchscreenKeyboardKeysAmount
+
+# Define SDL keysyms for multitouch gestures - pinch-zoom in, pinch-zoom out, rotate left, rotate right
+RedefinedKeysScreenGestures="$RedefinedKeysScreenGestures"
+
+# Redefine on-screen keyboard keys to SDL keysyms - currently 12 keys is the maximum
+RedefinedKeysScreenKb="$RedefinedKeysScreenKb"
+
+# Names for on-screen keyboard keys, such as Fire, Jump, Run etc, separated by spaces, they are used in SDL config menu
+RedefinedKeysScreenKbNames="$RedefinedKeysScreenKbNames"
+
+# On-screen keys theme
+# 0 = Ultimate Droid by Sean Stieber (green, with cross joystick)
+# 1 = Simple Theme by Beholder (white, with cross joystick)
+# 2 = Sun by Sirea (yellow, with round joystick)
+# 3 = Keen by Gerstrong (multicolor, with round joystick)
+# 4 = Retro by Santiago Radeff (red/white, with cross joystick)
+# 5 = GameBoy from RetroArch
+# 6 = PlayStation from RetroArch
+# 7 = SuperNintendo from RetroArch
+# 8 = DualShock from RetroArch
+# 9 = Nintendo64 from RetroArch
+TouchscreenKeysTheme=$TouchscreenKeysTheme
+
+# Redefine gamepad keys to SDL keysyms, button order is:
+# A B X Y L1 R1 L2 R2 LThumb RThumb Start Select Up Down Left Right LThumbUp LThumbDown LThumbLeft LThumbRight RThumbUp RThumbDown RThumbLeft RThumbRight
+RedefinedKeysGamepad="$RedefinedKeysGamepad"
+
+# Redefine keys for the second gamepad, same as the first gamepad if not set:
+RedefinedKeysSecondGamepad="$RedefinedKeysSecondGamepad"
+
+# Redefine keys for the third gamepad, same as the first gamepad if not set:
+RedefinedKeysThirdGamepad="$RedefinedKeysThirdGamepad"
+
+# Redefine keys for the fourth gamepad, same as the first gamepad if not set:
+RedefinedKeysFourthGamepad="$RedefinedKeysFourthGamepad"
+
+"# How long to show startup menu button, in msec, 0 to disable startup menu
+StartupMenuButtonTimeout=$StartupMenuButtonTimeout
+
+# Menu items to hide from startup menu, available menu items (SDL 1.2 only):
+# $MenuOptionsAvailable
+HiddenMenuOptions='$HiddenMenuOptions'
+
+# Menu items to show at startup - this is Java code snippet, leave empty for default
+# $FirstStartMenuOptionsDefault
+# Available menu items:
+# $MenuOptionsAvailable
+FirstStartMenuOptions='$FirstStartMenuOptions'
+
+# Minimum amount of RAM application requires, in Mb, SDL will print warning to user if it's lower
+AppMinimumRAM=$AppMinimumRAM
+
+# GCC version, or 'clang' for CLANG
+NDK_TOOLCHAIN_VERSION=$NDK_TOOLCHAIN_VERSION
+
+# Android platform version.
+# android-16 = Android 4.1, the earliest supported version in NDK r18.
+# android-18 = Android 4.3, the first version supporting GLES3.
+# android-21 = Android 5.1, the first version with SO_REUSEPORT defined.
+APP_PLATFORM=$APP_PLATFORM
+
+# Specify architectures to compile, 'all' or 'y' to compile for all architectures.
+# Available architectures: armeabi-v7a arm64-v8a x86 x86_64
+MultiABI='$MultiABI'
+
+# Optional shared libraries to compile - removing some of them will save space
+# MP3 patents are expired, but libmad license is GPL, not LGPL
+rep 'Available' project/jni/SettingsTemplate.mk
+CompiledLibraries="$CompiledLibraries"
+
+# Application uses custom build script AndroidBuild.sh instead of Android.mk (y) or (n)
+CustomBuildScript=$CustomBuildScript
+
+# Aditional CFLAGS for application
+AppCflags='$AppCflags'
+
+# Aditional C++-specific compiler flags for application, added after AppCflags
+AppCppflags='$AppCppflags'
+
+# Additional LDFLAGS for application
+AppLdflags='$AppLdflags'
+
+# If application has headers with the same name as system headers, this option tries to fix compiler flags to make it compilable
+AppOverlapsSystemHeaders=$AppOverlapsSystemHeaders
+
+# Build only following subdirs (empty will build all dirs, ignored with custom script)
+AppSubdirsBuild='$AppSubdirsBuild'
+
+# Exclude these files from build
+AppBuildExclude='$AppBuildExclude'
+
+# Application command line parameters, including app name as 0-th param
+AppCmdline='$AppCmdline'
+
+# Screen size is used by Google Play to prevent an app to be installed on devices with smaller screens
+# Minimum screen size that application supports: (s)mall / (m)edium / (l)arge
+MinimumScreenSize=$MinimumScreenSize
+
+# Your AdMob Publisher ID, (n) if you don't want advertisements
+AdmobPublisherId=$AdmobPublisherId
+
+# Your AdMob test device ID, to receive a test ad
+AdmobTestDeviceId=$AdmobTestDeviceId
+
+# Your AdMob banner size (BANNER/FULL_BANNER/LEADERBOARD/MEDIUM_RECTANGLE/SMART_BANNER/WIDE_SKYSCRAPER/FULL_WIDTH:Height/Width:AUTO_HEIGHT/Width:Height)
+AdmobBannerSize=$AdmobBannerSize
+
+# Google Play Game Services application ID, required for cloud saves to work
+GooglePlayGameServicesId=$GooglePlayGameServicesId
+
+# The app will open files with following extension, file path will be added to commandline params
+AppOpenFileExtension='$AppOpenFileExtension'
+EOF
 fi
 
 AppShortName=`echo $AppName | sed 's/ //g'`
