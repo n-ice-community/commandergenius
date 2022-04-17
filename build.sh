@@ -134,7 +134,7 @@ ndk-build -C project -j$NCPU V=1 NDK_APP_STRIP_MODE=none
 pushd project
 if $build_release ; then
 	./gradlew assembleRelease
-	if [ ! -x jni/application/src/AndroidPostBuild.sh ]; then
+	if [ -x jni/application/src/AndroidPostBuild.sh ]; then
 		pushd jni/application/src
 		./AndroidPostBuild.sh ${THIS_BUILD_DIR}/project/app/build/outputs/apk/release/app-release-unsigned.apk
 		popd
@@ -145,7 +145,7 @@ if $build_release ; then
 	apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android app/build/outputs/apk/release/app-release.apk
 else
 	./gradlew assembleDebug
-	if [ ! -x jni/application/src/AndroidPostBuild.sh ]; then
+	if [ -x jni/application/src/AndroidPostBuild.sh ]; then
 		pushd jni/application/src
 		./AndroidPostBuild.sh ${THIS_BUILD_DIR}/project/app/build/outputs/apk/debug/app-debug.apk
 		popd
