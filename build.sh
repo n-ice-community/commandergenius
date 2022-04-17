@@ -13,7 +13,8 @@ build_release=true
 # Check environment before continuing
 if ! $(which adb zipalign apksigner jarsigner ndk-build java cmake > /dev/null); then
 	echo "One of the follow binaries is missing. Check your environment";
-	echo "adb arch zipalign apksigner jarsigner ndk-build java cmake";
+	echo "adb zipalign apksigner jarsigner ndk-build java cmake";
+	which adb zipalign apksigner jarsigner ndk-build java cmake;
 	exit 1;
 fi
 
@@ -89,7 +90,7 @@ if ! [ -e project/local.properties ] && \
 				project/AndroidManifestTemplate.xml \
 			-cnewer \
 				project/src/Globals.java \
-		)"
+		)" \
 	];
 then
 	./changeAppSettings.sh -a
