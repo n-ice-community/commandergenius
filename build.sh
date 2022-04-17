@@ -12,18 +12,18 @@ build_release=true
 
 # Check environment before continuing
 if ! $(which adb zipalign apksigner jarsigner ndk-build java cmake > /dev/null); then
-    echo "One of the follow binaries is missing. Check your environment";
-    echo "adb arch zipalign apksigner jarsigner ndk-build java cmake";
-    exit 1;
+	echo "One of the follow binaries is missing. Check your environment";
+	echo "adb arch zipalign apksigner jarsigner ndk-build java cmake";
+	exit 1;
 fi
 
 JAVA_MVERSION=$(java --version 2>&1 | awk 'NR == 1{print $2}' | awk -F . '{print $1}')
 if [ $JAVA_MVERSION -lt 11 ]; then
-    echo "Java version equal or above to 11 necessary.";
-    exit 2;
-    if [ $JAVA_MVERSION -gt 11 ]; then
-        echo "Java 11 version is strongly recomended.";
-    fi
+	echo "Java version equal or above to 11 necessary.";
+	exit 2;
+	if [ $JAVA_MVERSION -gt 11 ]; then
+		echo "Java 11 version is strongly recomended.";
+	fi
 fi
 
 while getopts "sirqbh" OPT
@@ -74,23 +74,23 @@ if [ "$#" -gt 0 ]; then
 				echo "$f"
 			fi
 		done
-        popd
+		popd
 		exit 1
 	fi
 	shift
 fi
 
 if ! [ -e project/local.properties ] && \
-    grep "package $(grep -Po 'AppFullName\=\K[.[:alnum:]]+' AndroidAppSettings.cfg);" project/src/Globals.java > /dev/null 2>&1 && \
-    [ "$(readlink AndroidAppSettings.cfg)" -ot "project/src/Globals.java" ] && \
-    [ -z "$(find project/java/* \
-                 project/javaSDL2/* \
-                 project/jni/sdl2/android-project/app/src/main/java/org/libsdl/app/* \
-                 project/AndroidManifestTemplate.xml \
-            -cnewer \
-                 project/src/Globals.java \
-         )"
-    ];
+	grep "package $(grep -Po 'AppFullName\=\K[.[:alnum:]]+' AndroidAppSettings.cfg);" project/src/Globals.java > /dev/null 2>&1 && \
+	[ "$(readlink AndroidAppSettings.cfg)" -ot "project/src/Globals.java" ] && \
+	[ -z "$(find project/java/* \
+				project/javaSDL2/* \
+				project/jni/sdl2/android-project/app/src/main/java/org/libsdl/app/* \
+				project/AndroidManifestTemplate.xml \
+			-cnewer \
+				project/src/Globals.java \
+		)"
+	];
 then
 	./changeAppSettings.sh -a
 	sleep 1
@@ -102,7 +102,7 @@ if [ -z "$NCPU" ]; then
 	NCPU=8
 	if uname -s | grep -i "linux" > /dev/null ; then
 		MYARCH=linux-x86_64
-        NCPU=$(cat /proc/cpuinfo | grep -c -i processor)
+		NCPU=$(cat /proc/cpuinfo | grep -c -i processor)
 	fi
 	if uname -s | grep -i "darwin" > /dev/null ; then
 		MYARCH=darwin-x86_64
@@ -114,7 +114,9 @@ fi
 export BUILD_NUM_CPUS=$NCPU
 
 # Fix Gradle compilation error
-[ -z "$ANDROID_NDK_HOME" ] && export ANDROID_NDK_HOME="$(which ndk-build | sed 's@/ndk-build@@')"
+if [ -z "$ANDROID_NDK_HOME" ]; then
+	export ANDROID_NDK_HOME="$(which ndk-build | sed 's@/ndk-build@@')"
+fi
 
 if [ -x project/jni/application/src/AndroidPreBuild.sh ]; then
 	pushd project/jni/application/src
@@ -131,12 +133,12 @@ ndk-build -C project -j$NCPU V=1 NDK_APP_STRIP_MODE=none
 ./copyAssets.sh
 pushd project
 if $build_release ; then
-    ./gradlew assembleRelease
+	./gradlew assembleRelease
 	if [ ! -x jni/application/src/AndroidPostBuild.sh ]; then
 		pushd jni/application/src
 		./AndroidPostBuild.sh ${THIS_BUILD_DIR}/project/app/build/outputs/apk/release/app-release-unsigned.apk
 		popd
-    fi
+	fi
 	../copyAssets.sh pack-binaries app/build/outputs/apk/release/app-release-unsigned.apk
 	rm -f app/build/outputs/apk/release/app-release.apk
 	zipalign -p 4 app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release.apk
@@ -144,10 +146,10 @@ if $build_release ; then
 else
 	./gradlew assembleDebug
 	if [ ! -x jni/application/src/AndroidPostBuild.sh ]; then
-	    pushd jni/application/src
+		pushd jni/application/src
 		./AndroidPostBuild.sh ${THIS_BUILD_DIR}/project/app/build/outputs/apk/debug/app-debug.apk
 		popd
-    fi
+	fi
 	mkdir -p app/build/outputs/apk/release
 	../copyAssets.sh pack-binaries app/build/outputs/apk/debug/app-debug.apk
 	rm -f app/build/outputs/apk/release/app-release.apk
@@ -156,28 +158,28 @@ else
 fi
 
 if $sign_apk; then
-    pushd ..
-    ./sign.sh
-    popd
+	pushd ..
+	./sign.sh
+	popd
 fi
 
 if $sign_bundle; then
-    pushd ..
-    ./signBundle.sh
-    popd
+	pushd ..
+	./signBundle.sh
+	popd
 fi
 if $install_apk && [ -n "$(adb devices | tail -n +2)" ]; then
-    if $sign_apk; then
-        APPNAME=$(grep AppName ../AndroidAppSettings.cfg | sed 's/.*=//' | tr -d '"' | tr " '/" '---')
-        APPVER=$(grep AppVersionName ../AndroidAppSettings.cfg | sed 's/.*=//' | tr -d '"' | tr " '/" '---')
+	if $sign_apk; then
+		APPNAME=$(grep AppName ../AndroidAppSettings.cfg | sed 's/.*=//' | tr -d '"' | tr " '/" '---')
+		APPVER=$(grep AppVersionName ../AndroidAppSettings.cfg | sed 's/.*=//' | tr -d '"' | tr " '/" '---')
 		adb install -r ../$APPNAME-$APPVER.apk ;
-    else
-		adb install -r app/build/outputs/apk/release/app-release.apk 
-    fi
+	else
+		adb install -r app/build/outputs/apk/release/app-release.apk
+	fi
 fi
 
 if $run_apk; then
-    ActivityName="$(grep AppFullName ../AndroidAppSettings.cfg | sed 's/.*=//')/.MainActivity"
+	ActivityName="$(grep AppFullName ../AndroidAppSettings.cfg | sed 's/.*=//')/.MainActivity"
 	RUN_APK="adb shell am start -n $ActivityName"
 	echo "Running $ActivityName on the USB-connected device:"
 	echo "$RUN_APK"
