@@ -1,5 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
+set -e
 AUTO=a
 CHANGED=
 JAVA_SRC_PATH=project/java
@@ -1206,6 +1207,7 @@ if echo "$CompiledLibraries" | grep -E 'crypto|ssl' > /dev/null; then
 fi
 
 if echo "$CompiledLibraries" | grep -E 'iconv|charset|icu' > /dev/null; then
+	echo "#=Compiling prebuilt icu"
 	make -C project/jni -f Makefile.prebuilt icu ARCH_LIST="$MultiABI"
 fi
 

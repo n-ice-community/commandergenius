@@ -2,6 +2,7 @@
 
 LOCAL_PATH=`dirname $0`
 LOCAL_PATH=`cd $LOCAL_PATH && pwd`
+
 VER=build
 
 [ -d openttd-$VER-$1 ] || mkdir -p openttd-$VER-$1/bin/baseset
@@ -79,7 +80,13 @@ export ARCH=$1
 		echo "set_target_properties(${TARGET} PROPERTIES IMPORTED_LOCATION "'${'"${TARGET}"'_LIBRARY})' >> $CMAKE_SDL
 	done
 
-	cmake \
+	if [ -n "${CMAKE_BIN_LOC}" ]; then
+		NINJA_PATH=${CMAKE_BIN_LOC}/ninja
+	else
+		NINJA_PATH=$(which ninja)
+	fi
+
+	${CMAKE_BIN_LOC}cmake \
 		-DCMAKE_MODULE_PATH=$LOCAL_PATH/openttd-$VER-$1/cmake \
 		-DCMAKE_TOOLCHAIN_FILE=$NDK/build/cmake/android.toolchain.cmake \
 		-DANDROID_ABI=$1 \
@@ -88,7 +95,8 @@ export ARCH=$1
 		-DGLOBAL_DIR="." \
 		-DHOST_BINARY_DIR=$LOCAL_PATH/build-tools \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-        -DCMAKE_MAKE_PROGRAM=$(which ninja) \
+		-DCMAKE_PREFIX_PATH=$LOCAL_PATH/../../iconv/src/$ARCH/ \
+        -DCMAKE_MAKE_PROGRAM=$NINJA_PATH \
         -GNinja \
 		-B ./openttd-$VER-$1 -S ./src
 
@@ -98,9 +106,8 @@ mkdir -p staging-openttd-$VER-$1
 
 set -e
 
-cmake --build openttd-$VER-$1 --verbose;
-cmake --install openttd-$VER-$1 --prefix ./staging-openttd-$VER-$1;
-cp staging-openttd-$VER-$1/games/libapplication.so libapplication-$1.so;
+${CMAKE_BIN_LOC}cmake --build openttd-$VER-$1 --verbose;
+${CMAKE_BIN_LOC}cmake --install openttd-$VER-$1 --prefix ./staging-openttd-$VER-$1;
 cp staging-openttd-$VER-$1/games/libapplication.so libapplication-$1.so;
 mkdir -p ./data
 cp -r staging-openttd-$VER-$1/share/games/application/* data/

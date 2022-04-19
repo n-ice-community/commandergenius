@@ -13,6 +13,10 @@ ifneq ($(filter r1 r2 r3 r4 r5 r6 r7 r8,$(NDK_VERSION)),)
 $(error Your NDK $(NDK_VERSION) is too old, please download NDK from http://developer.android.com)
 endif
 
+ifdef ANDROID_NDK_HOME
+NDK_PATH := $(ANDROID_NDK_HOME)
+else
 NDK_PATH := $(shell dirname $(shell which ndk-build))
+endif
 
 include $(call all-subdir-makefiles)

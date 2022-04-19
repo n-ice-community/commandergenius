@@ -3,8 +3,7 @@
 IFS='
 '
 
-NDK=`which ndk-build`
-NDK=`dirname $NDK`
+NDK=${ANDROID_NDK_HOME:-$(dirname $(which ndk-build))}
 
 if uname -s | grep -i "linux" > /dev/null ; then
 	MYARCH=linux-$(uname -m)
@@ -25,7 +24,7 @@ else
 fi
 ARCH=x86
 GCCPREFIX=i686-linux-android
-APILEVEL=16
+APILEVEL=21
 
 APP_MODULES=`grep 'APP_MODULES [:][=]' $LOCAL_PATH/../Settings.mk | sed 's@.*[=]\(.*\)@\1@' | sed 's@\b\(application\|sdl_main\|sdl_native_helpers\|c++_shared\)\b@@g'`
 

@@ -9,25 +9,14 @@ run_apk=false
 sign_apk=false
 sign_bundle=false
 build_release=true
+do_zipalign=true
 
-# Check environment before continuing
-if ! $(which adb zipalign apksigner jarsigner ndk-build java cmake > /dev/null); then
-	echo "One of the follow binaries is missing. Check your environment";
-	echo "adb zipalign apksigner jarsigner ndk-build java cmake";
-	which adb zipalign apksigner jarsigner ndk-build java cmake;
-	exit 1;
+# Fix Gradle compilation error
+if [ -z "$ANDROID_NDK_HOME" ]; then
+	export ANDROID_NDK_HOME="$(which ndk-build | sed 's@/ndk-build@@')"
 fi
 
-JAVA_MVERSION=$(java --version 2>&1 | awk 'NR == 1{print $2}' | awk -F . '{print $1}')
-if [ $JAVA_MVERSION -lt 11 ]; then
-	echo "Java version equal or above to 11 necessary.";
-	exit 2;
-	if [ $JAVA_MVERSION -gt 11 ]; then
-		echo "Java 11 version is strongly recomended.";
-	fi
-fi
-
-while getopts "sirqbh" OPT
+while getopts "sirqbhz" OPT
 do
 	case $OPT in
 		s) sign_apk=true;;
@@ -35,12 +24,14 @@ do
 		r) install_apk=true ; run_apk=true;;
 		q) echo "Quick rebuild does not work anymore with Gradle!";;
 		b) sign_bundle=true;;
+		z) do_zipalign=false;;
 		h)
 			echo "Usage: $0 [-s] [-i] [-r] [-q] [debug|release] [app-name]"
 			echo "    -s:       sign .apk file after building"
 			echo "    -b:       sign .aab app bundle file after building"
 			echo "    -i:       install APK file to device after building"
 			echo "    -r:       run APK file on device after building"
+			echo "    -z:       skip zipalign and apksigner"
 			echo "    debug:    build debug package"
 			echo "    release:  build release package (default)"
 			echo "    app-name: directory under project/jni/application to be compiled"
@@ -81,10 +72,10 @@ if [ "$#" -gt 0 ]; then
 	shift
 fi
 
-if ! [ -e project/local.properties ] && \
-	grep "package $(grep -Po 'AppFullName\=\K[.[:alnum:]]+' AndroidAppSettings.cfg);" project/src/Globals.java > /dev/null 2>&1 && \
-	[ "$(readlink AndroidAppSettings.cfg)" -ot "project/src/Globals.java" ] && \
-	[ -z "$(find project/java/* \
+if [ ! -e project/local.properties ] || \
+	 ! grep -q "package $(grep -Po 'AppFullName\=\K[.[:alnum:]]+' AndroidAppSettings.cfg);" project/src/Globals.java || \
+	[ "$(readlink AndroidAppSettings.cfg)" -nt "project/src/Globals.java" ] || \
+	[ -n "$(find project/java/* \
 				project/javaSDL2/* \
 				project/jni/sdl2/android-project/app/src/main/java/org/libsdl/app/* \
 				project/AndroidManifestTemplate.xml \
@@ -114,10 +105,6 @@ if [ -z "$NCPU" ]; then
 fi
 export BUILD_NUM_CPUS=$NCPU
 
-# Fix Gradle compilation error
-if [ -z "$ANDROID_NDK_HOME" ]; then
-	export ANDROID_NDK_HOME="$(which ndk-build | sed 's@/ndk-build@@')"
-fi
 
 if [ -x project/jni/application/src/AndroidPreBuild.sh ]; then
 	pushd project/jni/application/src
@@ -126,11 +113,11 @@ if [ -x project/jni/application/src/AndroidPreBuild.sh ]; then
 fi
 
 if grep -q 'CustomBuildScript=y' ./AndroidAppSettings.cfg; then
-	ndk-build -C project -j$NCPU V=1 CUSTOM_BUILD_SCRIPT_FIRST_PASS=1 NDK_APP_STRIP_MODE=none
+	${ANDROID_NDK_HOME}/ndk-build -C project -j$NCPU V=1 CUSTOM_BUILD_SCRIPT_FIRST_PASS=1 NDK_APP_STRIP_MODE=none
 	make -C project/jni/application -f CustomBuildScript.mk
 fi
 
-ndk-build -C project -j$NCPU V=1 NDK_APP_STRIP_MODE=none
+${ANDROID_NDK_HOME}/ndk-build -C project -j$NCPU V=1 NDK_APP_STRIP_MODE=none
 ./copyAssets.sh
 pushd project
 if $build_release ; then
@@ -142,8 +129,10 @@ if $build_release ; then
 	fi
 	../copyAssets.sh pack-binaries app/build/outputs/apk/release/app-release-unsigned.apk
 	rm -f app/build/outputs/apk/release/app-release.apk
-	zipalign -p 4 app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release.apk
-	apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android app/build/outputs/apk/release/app-release.apk
+	if $do_zipalign; then
+		zipalign -p 4 app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release.apk
+		apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android app/build/outputs/apk/release/app-release.apk
+	fi
 else
 	./gradlew assembleDebug
 	if [ -x jni/application/src/AndroidPostBuild.sh ]; then
@@ -154,8 +143,10 @@ else
 	mkdir -p app/build/outputs/apk/release
 	../copyAssets.sh pack-binaries app/build/outputs/apk/debug/app-debug.apk
 	rm -f app/build/outputs/apk/release/app-release.apk
-	zipalign -p 4 app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release.apk
-	apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android app/build/outputs/apk/release/app-release.apk
+	if $do_zipalign; then
+		zipalign -p 4 app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release.apk
+		apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android app/build/outputs/apk/release/app-release.apk
+	fi
 fi
 
 if $sign_apk; then
