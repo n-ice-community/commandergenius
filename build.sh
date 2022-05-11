@@ -121,7 +121,11 @@ ${ANDROID_NDK_HOME}/ndk-build -C project -j$NCPU V=1 NDK_APP_STRIP_MODE=none
 ./copyAssets.sh
 pushd project
 if $build_release ; then
-	./gradlew assembleRelease
+	if [ -x ./gradlew ]; then
+		./gradlew assembleRelease
+	else
+		gradle assembleRelease
+	fi
 	if [ -x jni/application/src/AndroidPostBuild.sh ]; then
 		pushd jni/application/src
 		./AndroidPostBuild.sh ${THIS_BUILD_DIR}/project/app/build/outputs/apk/release/app-release-unsigned.apk
@@ -134,7 +138,11 @@ if $build_release ; then
 		apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android app/build/outputs/apk/release/app-release.apk
 	fi
 else
-	./gradlew assembleDebug
+	if [ -x ./gradlew ]; then
+		./gradlew assembleDebug
+	else
+		gradle assembleDebug
+	fi
 	if [ -x jni/application/src/AndroidPostBuild.sh ]; then
 		pushd jni/application/src
 		./AndroidPostBuild.sh ${THIS_BUILD_DIR}/project/app/build/outputs/apk/debug/app-debug.apk
