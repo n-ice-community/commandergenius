@@ -111,6 +111,6 @@ ${CMAKE_BIN_LOC}cmake --install openttd-$VER-$1 --prefix ./staging-openttd-$VER-
 cp staging-openttd-$VER-$1/games/libapplication.so libapplication-$1.so;
 mkdir -p ./data
 cp -r staging-openttd-$VER-$1/share/games/application/* data/
-./pack-data.sh
+./pack-data.sh "${ARCH}"
 
 set +e
