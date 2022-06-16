@@ -14,9 +14,9 @@ pushd ./data
 rm -f ${ANDROID_DATA_FULLPATH}/openttd-data-*.zip.xz ${ANDROID_DATA_FULLPATH}/openttd-data-*.zip
 
 pushd ./baseset
-curl --fail-with-body https://cdn.openttd.org/opengfx-releases/${GFX_VERSION}/opengfx-${GFX_VERSION}-all.zip | jar xv
-curl --fail-with-body https://cdn.openttd.org/opensfx-releases/${SFX_VERSION}/opensfx-${SFX_VERSION}-all.zip | jar xv
-curl --fail-with-body https://cdn.openttd.org/openmsx-releases/${MSX_VERSION}/openmsx-${MSX_VERSION}-all.zip | jar xv
+curl --fail https://cdn.openttd.org/opengfx-releases/${GFX_VERSION}/opengfx-${GFX_VERSION}-all.zip | jar xv
+curl --fail https://cdn.openttd.org/opensfx-releases/${SFX_VERSION}/opensfx-${SFX_VERSION}-all.zip | jar xv
+curl --fail https://cdn.openttd.org/openmsx-releases/${MSX_VERSION}/openmsx-${MSX_VERSION}-all.zip | jar xv
 tar xvf ./openmsx-${MSX_VERSION}.tar && rm ./openmsx-${MSX_VERSION}.tar
 popd
 
