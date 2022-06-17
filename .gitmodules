@@ -1,38 +1,3 @@
-[submodule "project/jni/application/NewRAW"]
-	path = project/jni/application/NewRAW
-	url = https://github.com/usineur/android-newraw.git
-[submodule "project/jni/boost/src"]
-	path = project/jni/boost/src
-	url = https://github.com/moritz-wundke/Boost-for-Android.git
-	branch = master
-	update = merge
-[submodule "project/jni/application/commandergenius/commandergenius"]
-	path = project/jni/application/commandergenius/commandergenius
-	url = https://github.com/gerstrong/Commander-Genius.git
-[submodule "project/jni/application/openarena/engine"]
-	path = project/jni/application/openarena/engine
-	url = https://github.com/pelya/openarena-engine.git
-[submodule "project/jni/application/openarena/vm"]
-	path = project/jni/application/openarena/vm
-	url = https://github.com/pelya/openarena-vm
-[submodule "project/jni/application/teeworlds/src"]
-	path = project/jni/application/teeworlds/src
-	url = https://github.com/pelya/teeworlds.git
-[submodule "project/jni/application/xserver/xserver"]
-	path = project/jni/application/xserver/xserver
-	url = https://github.com/pelya/xserver.git
-	branch = xsdl-1.20
-	update = merge
-[submodule "android-shmem"]
-	path = project/jni/shmem
-	url = https://github.com/pelya/android-shmem.git
-	branch = master
-	update = merge
-[submodule "project/jni/application/hid-pc-keyboard/src"]
-	path = project/jni/application/hid-pc-keyboard/src
-	url = https://github.com/pelya/android-keyboard-gadget.git
-	branch = master
-	update = merge
 [submodule "project/jni/iconv/src"]
 	path = project/jni/iconv/src
 	url = https://github.com/pelya/libiconv-libicu-android.git
@@ -42,48 +7,6 @@
 	path = project/jni/application/openttd/src
 	url = https://github.com/n-ice-community/openttd-android.git
 	branch = 12
-[submodule "project/jni/application/uae4all2"]
-	path = project/jni/application/uae4all2
-	url = https://github.com/lubomyr/uae4all2.git
-[submodule "project/jni/application/basiliskii/basiliskii"]
-	path = project/jni/application/basiliskii/basiliskii
-	url = https://github.com/pelya/BasiliskII-android.git
-[submodule "project/jni/vncserver/src"]
-	path = project/jni/vncserver/src
-	url = https://github.com/LibVNC/libvncserver.git
-[submodule "project/jni/application/vice/vice"]
-	path = project/jni/application/vice/vice
-	url = https://github.com/lubomyr/vice-2.4.git
-[submodule "project/jni/application/xserver/pulseaudio"]
-	path = project/jni/application/xserver/pulseaudio
-	url = https://github.com/pelya/pulseaudio-android.git
-	branch = master
-[submodule "project/jni/application/supertux/supertux"]
-	path = project/jni/application/supertux/supertux
-	url = https://github.com/pelya/supertux.git
-[submodule "project/jni/application/fheroes2/fheroes2"]
-	path = project/jni/application/fheroes2/fheroes2
-	url = https://github.com/gerstrong/fheroes2plus.git
-[submodule "project/jni/application/ninslash/src"]
-	path = project/jni/application/ninslash/src
-	url = https://github.com/pelya/Ninslash.git
-	branch = master
-	update = merge
-[submodule "project/jni/application/openttd-jgrpp/src"]
-	path = project/jni/application/openttd-jgrpp/src
-	url = https://github.com/pelya/OpenTTD-JGR-patchpack.git
-	branch = android-desktop
-[submodule "project/jni/application/liero/src"]
-	path = project/jni/application/liero/src
-	url = https://github.com/pelya/liero-android.git
-[submodule "project/jni/application/openlierox/src"]
-	path = project/jni/application/openlierox/src
-	url = https://github.com/albertz/openlierox.git
-	branch = half-assed-android-port
-[submodule "project/jni/application/xserver-debian/debian-image"]
-	path = project/jni/application/xserver-debian/debian-image
-	url = https://github.com/pelya/debian-noroot
-	branch = master
 [submodule "project/jni/sdl2"]
 	path = project/jni/sdl2
 	url = https://github.com/libsdl-org/SDL.git

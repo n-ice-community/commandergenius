@@ -1,2 +1,0 @@
-- shift block to middle if rotation would fail
-- improve rand_holes in bowl.c:639

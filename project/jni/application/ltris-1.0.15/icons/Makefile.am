@@ -1,1 +1,0 @@
-EXTRA_DIST = ltris16.xpm ltris32.xpm ltris48.xpm

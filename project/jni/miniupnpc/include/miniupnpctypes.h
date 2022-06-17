@@ -1,1 +1,0 @@
-../miniupnpctypes.h

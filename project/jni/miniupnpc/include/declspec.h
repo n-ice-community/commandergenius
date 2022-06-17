@@ -1,1 +1,0 @@
-../declspec.h
