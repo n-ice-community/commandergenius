@@ -5,3 +5,7 @@ OpenTTD is an open source reimplementation of the Microprose game Transport Tyco
 OpenTTD is based on Chris Sawyer's Transport Tycoon Deluxe and introduces a whole set of new features, including multiplayer support, better stations and vehicles, larger maps and a host of other options. 
 
 Posting a full list of features would be futile as it would mean updating this page almost daily, and even then some things might be forgotten. Play with the game to experience all the features yourself, or take a look at the <a href="https://wiki.openttd.org/en/Manual/">Manual</a> for a more thorough listing and explanation of the features and possibilities available.
+
+Tips:
+* Scroll the map with two fingers, when you are building roads or stations.
+* Close dialogs by dragging them to the screen edge.
