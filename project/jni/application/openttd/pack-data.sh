@@ -2,12 +2,17 @@
 
 set -e
 
-VER=12.2-0
+VER=13.0-0
 GFX_VERSION=7.1
 SFX_VERSION=1.0.3
 MSX_VERSION=0.4.2
 ARCH=$1
 ANDROID_DATA_FULLPATH=$(realpath ./AndroidData/)
+
+GFX_VERSION=$(curl --fail https://cdn.openttd.org/opengfx-releases/latest.yaml | grep -Po "version: \K[0-9.]+")
+SFX_VERSION=$(curl --fail https://cdn.openttd.org/opensfx-releases/latest.yaml | grep -Po "version: \K[0-9.]+")
+MSX_VERSION=$(curl --fail https://cdn.openttd.org/openmsx-releases/latest.yaml | grep -Po "version: \K[0-9.]+")
+
 
 # Base game data
 pushd ./data
