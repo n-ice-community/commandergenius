@@ -13,7 +13,7 @@ freely, subject to the following restrictions:
 1. The origin of this software must not be misrepresented; you must not
    claim that you wrote the original software. If you use this software
    in a product, an acknowledgment in the product documentation would be
-   appreciated but is not required. 
+   appreciated but is not required.
 2. Altered source versions must be plainly marked as such, and must not be
    misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
@@ -123,6 +123,8 @@ public class MainActivity extends Activity
 		DimSystemStatusBar.dim(null, getWindow());
 
 		Log.i("SDL", "libSDL: Creating startup screen");
+		Display display = getWindowManager().getDefaultDisplay();
+		int height = display.getHeight();
 		_layout = new LinearLayout(this);
 		_layout.setOrientation(LinearLayout.VERTICAL);
 		_layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
@@ -139,6 +141,8 @@ public class MainActivity extends Activity
 			_btn.setEnabled(false);
 			_btn.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 			_btn.setText(getResources().getString(R.string.device_change_cfg));
+			/* Add padding so play service popup doesnt block button */
+			_btn.setPadding(0, (int)(height * 0.1), 0, (int)(height * 0.1));
 			class onClickListener implements View.OnClickListener
 			{
 					public MainActivity p;
@@ -172,7 +176,7 @@ public class MainActivity extends Activity
 		}
 		img.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
 		_layout.addView(img);
-		
+
 		_videoLayout = new FrameLayout(this);
 		_videoLayout.addView(_layout);
 
@@ -182,7 +186,7 @@ public class MainActivity extends Activity
 			_videoLayout.addView(_ad.getView());
 			_ad.getView().setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM | Gravity.RIGHT));
 		}
-		
+
 		setContentView(_videoLayout);
 		_videoLayout.setFocusable(true);
 		_videoLayout.setFocusableInTouchMode(true);
@@ -302,7 +306,7 @@ public class MainActivity extends Activity
 		}
 		catch(Exception e) {}
 	}
-	
+
 	public void setUpStatusLabel()
 	{
 		MainActivity Parent = this; // Too lazy to rename
@@ -400,7 +404,7 @@ public class MainActivity extends Activity
 		if(sdlInited)
 			return;
 		Log.i("SDL", "libSDL: Initializing video and SDL application");
-		
+
 		sdlInited = true;
 		DimSystemStatusBar.dim(_videoLayout, getWindow());
 		_videoLayout.removeView(_layout);
@@ -617,7 +621,7 @@ public class MainActivity extends Activity
 			onResume();
 		}
 	}
-	
+
 	public boolean isPaused()
 	{
 		return _isPaused;
@@ -1034,7 +1038,7 @@ public class MainActivity extends Activity
 
 	public void setAdvertisementPosition(int x, int y)
 	{
-		
+
 		if( _ad.getView() != null )
 		{
 			final FrameLayout.LayoutParams layout = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -1159,7 +1163,7 @@ public class MainActivity extends Activity
 		super.onNewIntent(i);
 		setIntent(i);
 	}
-	
+
 	public void LoadLibraries()
 	{
 		try
@@ -1284,7 +1288,7 @@ public class MainActivity extends Activity
 					libDir.mkdirs();
 				}
 				catch( SecurityException ee ) { };
-				
+
 				byte[] buf = new byte[16384];
 				while(true)
 				{
