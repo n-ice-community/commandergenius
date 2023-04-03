@@ -10,3 +10,4 @@ if [ ! -e build-tools/Makefile ]; then
 fi
 
 make -C build-tools -j8 VERBOSE=1 || exit 1
+./download-data.sh

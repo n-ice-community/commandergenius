@@ -3,26 +3,17 @@
 set -e
 
 VER=13.0-0
-GFX_VERSION=7.1
-SFX_VERSION=1.0.3
-MSX_VERSION=0.4.2
 ARCH=$1
 ANDROID_DATA_FULLPATH=$(realpath ./AndroidData/)
-
-GFX_VERSION=$(curl --fail https://cdn.openttd.org/opengfx-releases/latest.yaml | grep -Po "version: \K[0-9.]+")
-SFX_VERSION=$(curl --fail https://cdn.openttd.org/opensfx-releases/latest.yaml | grep -Po "version: \K[0-9.]+")
-MSX_VERSION=$(curl --fail https://cdn.openttd.org/openmsx-releases/latest.yaml | grep -Po "version: \K[0-9.]+")
-
 
 # Base game data
 pushd ./data
 rm -f ${ANDROID_DATA_FULLPATH}/openttd-data-*.zip.xz ${ANDROID_DATA_FULLPATH}/openttd-data-*.zip
 
 pushd ./baseset
-curl --fail https://cdn.openttd.org/opengfx-releases/${GFX_VERSION}/opengfx-${GFX_VERSION}-all.zip | jar xv
-curl --fail https://cdn.openttd.org/opensfx-releases/${SFX_VERSION}/opensfx-${SFX_VERSION}-all.zip | jar xv
-curl --fail https://cdn.openttd.org/openmsx-releases/${MSX_VERSION}/openmsx-${MSX_VERSION}-all.zip | jar xv
-tar xvf ./openmsx-${MSX_VERSION}.tar && rm ./openmsx-${MSX_VERSION}.tar
+	cp ../../data-plat-indp/opengfx*.tar .
+	cp ../../data-plat-indp/opensfx*.tar .
+	cp -r ../../data-plat-indp/openmsx*/ .
 popd
 
 zip -0 -r ${ANDROID_DATA_FULLPATH}/openttd-data-$VER.zip ./ && xz -8 ${ANDROID_DATA_FULLPATH}/openttd-data-$VER.zip
