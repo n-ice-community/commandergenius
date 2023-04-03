@@ -10,13 +10,15 @@ sign_apk=false
 sign_bundle=false
 build_release=true
 do_zipalign=true
+named_variant="sdl"
+base_app_name=""
 
 # Fix Gradle compilation error
 if [ -z "$ANDROID_NDK_HOME" ]; then
 	export ANDROID_NDK_HOME="$(which ndk-build | sed 's@/ndk-build@@')"
 fi
 
-while getopts "sirqbhz" OPT
+while getopts "sirqbhzv:" OPT
 do
 	case $OPT in
 		s) sign_apk=true;;
@@ -25,6 +27,7 @@ do
 		q) echo "Quick rebuild does not work anymore with Gradle!";;
 		b) sign_bundle=true;;
 		z) do_zipalign=false;;
+		v) named_variant=${OPTARG};;
 		h)
 			echo "Usage: $0 [-s] [-i] [-r] [-q] [debug|release] [app-name]"
 			echo "    -s:       sign .apk file after building"
@@ -32,6 +35,7 @@ do
 			echo "    -i:       install APK file to device after building"
 			echo "    -r:       run APK file on device after building"
 			echo "    -z:       skip zipalign and apksigner"
+			echo "    -v <v>:   choose variant, either sdl or fdroid"
 			echo "    debug:    build debug package"
 			echo "    release:  build release package (default)"
 			echo "    app-name: directory under project/jni/application to be compiled"
@@ -72,8 +76,19 @@ if [ "$#" -gt 0 ]; then
 	shift
 fi
 
-if [ ! -e project/local.properties ] || \
-	 ! grep -q "package $(grep -Po 'AppFullName\=\K[.[:alnum:]]+' AndroidAppSettings.cfg);" project/src/Globals.java || \
+base_app_name=$(grep -Po 'AppFullName\=\K[[:alnum:].]+\.(?=[[:alnum:]]+)' AndroidAppSettings.cfg)
+
+function project_needs_setup {
+	local app_name=$(grep -Po 'AppFullName\=\K[.[:alnum:]]+' AndroidAppSettings.cfg)
+
+	if [ -z "${base_app_name}" ]; then
+		echo "Could not determine App base name";
+		exit 2
+	fi
+
+	[ ! -e project/local.properties ] || \
+	  ! grep -q "package ${app_name};" project/src/Globals.java || \
+	  ! grep -q "package ${base_app_name}${named_variant};" project/src/Globals.java || \
 	[ "$(readlink AndroidAppSettings.cfg)" -nt "project/src/Globals.java" ] || \
 	[ -n "$(find project/java/* \
 				project/javaSDL2/* \
@@ -82,9 +97,12 @@ if [ ! -e project/local.properties ] || \
 			-cnewer \
 				project/src/Globals.java \
 		)" \
-	];
+	]
+}
+
+if project_needs_setup;
 then
-	./changeAppSettings.sh -a
+	APP_FULL_NAME="${base_app_name}${named_variant}" ./changeAppSettings.sh -a
 	sleep 1
 	touch project/src/Globals.java
 fi

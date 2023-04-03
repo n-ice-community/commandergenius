@@ -49,6 +49,12 @@ source ./AndroidAppSettings.cfg
 
 var=""
 
+if [ -n "${APP_FULL_NAME}" ]; then
+	echo ${APP_FULL_NAME}
+	AppFullName="${APP_FULL_NAME}"
+	CHANGED=1
+fi
+
 if [ "$CompatibilityHacks" = y ]; then
 	SwVideoMode=y
 fi
@@ -164,7 +170,7 @@ AppVersionCode=$AppVersionCode
 # Application user-visible version name (string)
 AppVersionName="$AppVersionName"
 
-# Specify path to download application data in zip archive in the form "Description|URL|MirrorURL^Description2|URL2|MirrorURL2^...
+# Specify path to download application data in zip archive in the form "Description|URL|MirrorURL^Description2|URL2|MirrorURL2^...'
 # If you'll start Description with '!' symbol it will be enabled by default, '!!' will also hide the entry from the menu, so it cannot be disabled
 # If the URL in in the form ':dir/file.dat:http://URL/' it will be downloaded as binary BLOB to the application dir and not unzipped
 # If the URL does not contain 'http://' or 'https://', it is treated as file from 'project/jni/application/src/AndroidData' dir -
@@ -172,14 +178,6 @@ AppVersionName="$AppVersionName"
 # You can specify Google Play expansion files in the form 'obb:main.12345' or 'obb:patch.12345' where 12345 is the app version for the obb file
 # You can mount expansion files created with jobb tool if you put 'mnt:main.12345' or 'mnt:patch.12345'
 # The mount directory will be returned by calling getenv("ANDROID_OBB_MOUNT_DIR")
-# Android app bundles do not support .obb files, they use asset packs instead.
-# This app project includes one pre-configured install-time asset pack.
-# To put your data into asset pack, copy it to the directory AndroidData/assetpack
-# and run changeAppSettings.sh. The asset pack zip archive will be returned by
-# getenv("ANDROID_ASSET_PACK_PATH"), this call will return NULL if the asset pack is not installed.
-# You can put "assetpack" keyword to AppDataDownloadUrl, the code will check
-# if the asset pack is installed and will not download the data from other URLs.
-# You can extract files from the asset pack the same way you extract files from the app assets.
 # You can use .zip.xz archives for better compression, but you need to add 'lzma' to CompiledLibraries
 # Generate .zip.xz files like this: zip -0 -r data.zip your-data/* ; xz -8 data.zip
 AppDataDownloadUrl="$AppDataDownloadUrl"
@@ -191,7 +189,7 @@ ResetSdlConfigForThisVersion=$ResetSdlConfigForThisVersion
 DeleteFilesOnUpgrade="$DeleteFilesOnUpgrade"
 
 # Here you may type readme text, which will be shown during startup. Format is:
-# Text in English, use \\\\n to separate lines (that's four backslashes)^de:Text in Deutsch^ru:Text in Russian^button:Button that will open some URL:http://url-to-open/
+# Text in English, use \\\\\\\\n to separate lines (that's four backslashes)^de:Text in Deutsch^ru:Text in Russian^button:Button that will open some URL:http://url-to-open/
 ReadmeText='$ReadmeText' | sed 's/\\\\n/\\\\\\\\n/g'
 
 # libSDL version to use (1.2/2)
@@ -231,7 +229,7 @@ SdlVideoResize=$SdlVideoResize
 # Application resizing will keep 4:3 aspect ratio, with black bars at sides (y)/(n)
 SdlVideoResizeKeepAspect=$SdlVideoResizeKeepAspect
 
-Do not allow device to sleep when the application is in foreground, set this for video players or apps which use accelerometer
+# Do not allow device to sleep when the application is in foreground, set this for video players or apps which use accelerometer
 InhibitSuspend=$InhibitSuspend
 
 # Create Android service, so the app is less likely to be killed while in background
@@ -410,7 +408,7 @@ RedefinedKeysThirdGamepad="$RedefinedKeysThirdGamepad"
 # Redefine keys for the fourth gamepad, same as the first gamepad if not set:
 RedefinedKeysFourthGamepad="$RedefinedKeysFourthGamepad"
 
-"# How long to show startup menu button, in msec, 0 to disable startup menu
+# How long to show startup menu button, in msec, 0 to disable startup menu
 StartupMenuButtonTimeout=$StartupMenuButtonTimeout
 
 # Menu items to hide from startup menu, available menu items (SDL 1.2 only):
@@ -441,7 +439,8 @@ MultiABI='$MultiABI'
 
 # Optional shared libraries to compile - removing some of them will save space
 # MP3 patents are expired, but libmad license is GPL, not LGPL
-rep 'Available' project/jni/SettingsTemplate.mk
+# Available libraries: mad (GPL-ed!) sdl_mixer sdl_image sdl_ttf sdl_net sdl_blitpool sdl_gfx sdl_sound intl xml2 lua jpeg png ogg flac tremor vorbis freetype xerces curl theora fluidsynth lzma lzo2 mikmod openal timidity zzip bzip2 yaml-cpp python boost_date_time boost_filesystem boost_iostreams boost_program_options boost_regex boost_signals boost_system boost_thread glu avcodec avdevice avfilter avformat avresample avutil swscale swresample bzip2
+# rep 'Available' project/jni/SettingsTemplate.mk
 CompiledLibraries="$CompiledLibraries"
 
 # Application uses custom build script AndroidBuild.sh instead of Android.mk (y) or (n)
