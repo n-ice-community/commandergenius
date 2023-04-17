@@ -412,13 +412,14 @@ RedefinedKeysFourthGamepad="$RedefinedKeysFourthGamepad"
 StartupMenuButtonTimeout=$StartupMenuButtonTimeout
 
 # Menu items to hide from startup menu, available menu items (SDL 1.2 only):
-# $MenuOptionsAvailable
+# ${MenuOptionsAvailable%%[[:space:]]}
+
 HiddenMenuOptions='$HiddenMenuOptions'
 
 # Menu items to show at startup - this is Java code snippet, leave empty for default
 # $FirstStartMenuOptionsDefault
 # Available menu items:
-# $MenuOptionsAvailable
+# ${MenuOptionsAvailable%%[[:space:]]}
 FirstStartMenuOptions='$FirstStartMenuOptions'
 
 # Minimum amount of RAM application requires, in Mb, SDL will print warning to user if it's lower
