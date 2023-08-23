@@ -40,6 +40,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Guideline;
+import androidx.constraintlayout.widget.ConstraintSet;
 import android.graphics.drawable.Drawable;
 import android.graphics.Color;
 import android.content.res.Configuration;
@@ -125,11 +128,12 @@ public class MainActivity extends Activity
 		Log.i("SDL", "libSDL: Creating startup screen");
 		Display display = getWindowManager().getDefaultDisplay();
 		int height = display.getHeight();
-		_layout = new LinearLayout(this);
-		_layout.setOrientation(LinearLayout.VERTICAL);
-		_layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+		_layout = new ConstraintLayout(this);
+		_layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
 		_layout2 = new LinearLayout(this);
-		_layout2.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		_layout2.setId(View.generateViewId());
+		_layout2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0));
 		loadingDialog = new ProgressDialog(this);
 		loadingDialog.setMessage(getString(R.string.accessing_network));
 
@@ -139,10 +143,8 @@ public class MainActivity extends Activity
 		{
 			_btn = new Button(this);
 			_btn.setEnabled(false);
-			_btn.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+			_btn.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
 			_btn.setText(getResources().getString(R.string.device_change_cfg));
-			/* Add padding so play service popup doesnt block button */
-			_btn.setPadding(0, (int)(height * 0.1), 0, (int)(height * 0.1));
 			class onClickListener implements View.OnClickListener
 			{
 					public MainActivity p;
@@ -161,7 +163,6 @@ public class MainActivity extends Activity
 			_layout2.addView(_btn);
 		}
 
-		_layout.addView(_layout2);
 
 		ImageView img = new ImageView(this);
 
@@ -174,8 +175,22 @@ public class MainActivity extends Activity
 		{
 			img.setImageResource(R.drawable.publisherlogo);
 		}
-		img.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+		img.setId(View.generateViewId());
+		img.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+
 		_layout.addView(img);
+		_layout.addView(_layout2);
+
+		ConstraintSet set = new ConstraintSet();
+		set.clone(_layout);
+
+		int[] chainIds = { img.getId(), _layout2.getId() }; // the ids you set on your views above
+		float[] weights = { 8, 2 };
+		set.createVerticalChain(ConstraintSet.PARENT_ID, ConstraintSet.TOP,
+															ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM,
+															chainIds, weights, ConstraintSet.CHAIN_SPREAD);
+
+		set.applyTo(_layout);
 
 		_videoLayout = new FrameLayout(this);
 		_videoLayout.addView(_layout);
@@ -1524,7 +1539,7 @@ public class MainActivity extends Activity
 
 	private TextView _tv = null;
 	private Button _btn = null;
-	private LinearLayout _layout = null;
+	private ConstraintLayout _layout = null;
 	private LinearLayout _layout2 = null;
 	private Advertisement _ad = null;
 	public CloudSave cloudSave = null;
