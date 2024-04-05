@@ -1,0 +1,37 @@
+diff -u -r arm64-v8a-old/include/crypto/bn_conf.h arm64-v8a/include/crypto/bn_conf.h
+--- arm64-v8a-old/include/crypto/bn_conf.h	2021-03-12 23:45:55.475710837 +0200
++++ arm64-v8a/include/crypto/bn_conf.h	2021-03-13 00:52:09.517668615 +0200
+@@ -21,8 +21,13 @@
+ /* Should we define BN_DIV2W here? */
+ 
+ /* Only one for the following should be defined */
+-#define SIXTY_FOUR_BIT_LONG
++#undef SIXTY_FOUR_BIT_LONG
+ #undef SIXTY_FOUR_BIT
+ #undef THIRTY_TWO_BIT
++#ifdef __LP64__
++#define SIXTY_FOUR_BIT_LONG
++#else
++#define THIRTY_TWO_BIT
++#endif
+ 
+ #endif
+diff -u -r arm64-v8a-old/include/openssl/opensslconf.h arm64-v8a/include/openssl/opensslconf.h
+--- arm64-v8a-old/include/openssl/opensslconf.h	2021-03-12 23:45:55.475710837 +0200
++++ arm64-v8a/include/openssl/opensslconf.h	2021-03-13 00:53:06.261987869 +0200
+@@ -188,9 +188,14 @@
+ #if !defined(OPENSSL_SYS_UEFI)
+ # undef BN_LLONG
+ /* Only one for the following should be defined */
+-# define SIXTY_FOUR_BIT_LONG
++# undef SIXTY_FOUR_BIT_LONG
+ # undef SIXTY_FOUR_BIT
+ # undef THIRTY_TWO_BIT
++# ifdef __LP64__
++#  define SIXTY_FOUR_BIT_LONG
++# else
++#  define THIRTY_TWO_BIT
++# endif
+ #endif
+ 
+ #define RC4_INT unsigned char
