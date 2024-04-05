@@ -6,6 +6,9 @@ endif
 
 # Disable timidity library inside sdl2_mixer, we have our own version of timidity used by OpenTTD
 SUPPORT_MID_TIMIDITY := 0
+# Enable png and jpeg modules inside sdl2_image
+SUPPORT_JPG := true
+SUPPORT_PNG := true
 
 NDK_VERSION := $(strip $(patsubst android-ndk-%,%,$(filter android-ndk-%, $(subst /, ,$(dir $(TARGET_CC))))))
 #$(info NDK version $(NDK_VERSION)) # This warning puzzles ndk-gdb

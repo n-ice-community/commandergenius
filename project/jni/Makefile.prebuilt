@@ -73,6 +73,7 @@ $(ICONV) $(ICU): iconv/src/build.sh
 		cp -f $$ARCH/include/*.h ../include/  ; \
 		mkdir -p ../../icuuc/lib/$$ARCH ../../icuuc/include/unicode ../../icuuc/include/layout  ; \
 		cp -f $$ARCH/libicu*.a ../../icuuc/lib/$$ARCH/  ; \
+		[ -d ../../icuuc/share ] || cp -rf $$ARCH/share ../../icuuc/  ; \
 		cp -f $$ARCH/include/unicode/*.h ../../icuuc/include/unicode/  ; \
 		cp -f $$ARCH/include/layout/*.h ../../icuuc/include/layout/  ; \
 		cp -f $$ARCH/include/icu-le-hb/layout/*.h ../../icuuc/include/layout/  ; \

@@ -4,6 +4,7 @@ set -e
 AUTO=a
 CHANGED=
 JAVA_SRC_PATH=project/java
+[ -z "$ANDROID_SDK_ROOT" ] && ANDROID_SDK_ROOT="$ANDROID_HOME"
 
 if [ "X$1" = "X-a" ]; then
 	AUTO=a
@@ -412,14 +413,14 @@ RedefinedKeysFourthGamepad="$RedefinedKeysFourthGamepad"
 StartupMenuButtonTimeout=$StartupMenuButtonTimeout
 
 # Menu items to hide from startup menu, available menu items (SDL 1.2 only):
-# ${MenuOptionsAvailable%%[[:space:]]}
+# ${MenuOptionsAvailable%[[:space:]]}
 
 HiddenMenuOptions='$HiddenMenuOptions'
 
 # Menu items to show at startup - this is Java code snippet, leave empty for default
 # $FirstStartMenuOptionsDefault
 # Available menu items:
-# ${MenuOptionsAvailable%%[[:space:]]}
+# ${MenuOptionsAvailable%[[:space:]]}
 FirstStartMenuOptions='$FirstStartMenuOptions'
 
 # Minimum amount of RAM application requires, in Mb, SDL will print warning to user if it's lower
@@ -498,7 +499,7 @@ HorizontalOrientation=false
 
 UsingSdl2=false
 if [ "$LibSdlVersion" = "2.0" ] ; then
-	"$LibSdlVersion" = "2"
+	LibSdlVersion="2"
 fi
 if [ "$LibSdlVersion" = "2" ] ; then
 	UsingSdl2=true
@@ -775,7 +776,7 @@ for KEY in $RedefinedKeysFourthGamepad; do
 done
 
 if [ "$APP_PLATFORM" = "" ]; then
-	APP_PLATFORM=android-16
+	APP_PLATFORM=android-19
 fi
 
 if [ "$MultiABI" = "y" ] ; then
@@ -880,7 +881,7 @@ fi
 
 echo Patching project/AndroidManifest.xml
 cat $ANDROID_MANIFEST_TEMPLATE | \
-	sed "s/package=.*/package=\"$AppFullName\"/" | \
+	sed "s/package=.*//" | \
 	sed "s/android:screenOrientation=.*/android:screenOrientation=\"$ScreenOrientation1\"/" | \
 	sed "s^android:versionCode=.*^android:versionCode=\"$AppVersionCode\"^" | \
 	sed "s^android:versionName=.*^android:versionName=\"$AppVersionName\"^" | \
@@ -896,8 +897,19 @@ else
 	cat $F | sed "s/^package .*;/package $AppFullName;/" >> project/src/Advertisement.java
 fi
 
+if [ -z "$ANDROID_NDK_HOME" ]; then
+	export ANDROID_NDK_HOME="$(which ndk-build | sed 's@/ndk-build@@')"
+fi
+if [ -z "$ANDROID_NDK_HOME" ]; then
+	echo "Set ANDROID_NDK_HOME env variable, or put ndk-build into your PATH"
+	exit 1
+fi
+NDK_VER=$(echo ${ANDROID_NDK_HOME} | grep -Eo '[^/]+$')
+
 cat project/app/build-template.gradle | \
-	sed 's/applicationId .*/applicationId "'"$AppFullName"'"/' > \
+	sed 's/applicationId .*/applicationId "'"${AppFullName}"'"/' | \
+	sed 's/namespace .*/namespace '"'"${AppFullName}"'"'/' | \
+	sed 's/ndkVersion .*/ndkVersion "'"${NDK_VER}"'"/' > \
 	project/app/build.gradle
 
 echo "-keep class $AppFullName.** { *; }" > project/proguard-local.cfg
@@ -1111,6 +1123,7 @@ done
 cd ../../..
 
 SDK_DIR=`grep '^sdk.dir' project/local.properties | sed 's/.*=//'`
+[ -z "$SDK_DIR" ] && SDK_DIR="$ANDROID_HOME"
 [ -z "$SDK_DIR" ] && SDK_DIR=`which android | sed 's@/tools/android$@@'`
 mkdir -p project/libs
 echo "sdk.dir=$SDK_DIR" > project/local.properties
@@ -1129,17 +1142,6 @@ else
 	done
 
 	$SEDI "s/==GOOGLEPLAYGAMESERVICES_APP_ID==/$GooglePlayGameServicesId/g" project/res/values/strings.xml
-
-	PROGUARD=`which android`
-	[ -z "$PROGUARD" ] && PROGUARD=$ANDROID_SDK_ROOT/tools/android
-	PROGUARD=`dirname $PROGUARD`/proguard/lib/proguard.jar
-	java -jar $PROGUARD | grep 'ProGuard, version 5.3' || {
-		echo "Error: ProGuard is too old"
-		echo "You need to update ProGuard. Download it here:"
-		echo "https://sourceforge.net/projects/proguard/files/proguard/5.3/proguard5.3.3.zip"
-		echo "Unpack it, then place file proguard.jar to $PROGUARD"
-		exit 1
-	}
 fi
 
 if [ -e "project/jni/application/src/AndroidData/assetpack" ] ; then

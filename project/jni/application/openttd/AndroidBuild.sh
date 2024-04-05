@@ -5,6 +5,9 @@ LOCAL_PATH=`cd $LOCAL_PATH && pwd`
 
 VER=build
 
+[ -z "$BUILD_NUM_CPUS" ] && $BUILD_NUM_CPUS=8
+export CMAKE_BUILD_PARALLEL_LEVEL=$BUILD_NUM_CPUS
+
 [ -d openttd-$VER-$1 ] || mkdir -p openttd-$VER-$1/bin/baseset
 
 export ARCH=$1
@@ -85,6 +88,8 @@ export ARCH=$1
 	else
 		NINJA_PATH=$(which ninja)
 	fi
+	NINJA_ARGS=
+	[ -n "$NINJA_PATH" ] && NINJA_ARGS="-DCMAKE_MAKE_PROGRAM=$NINJA_PATH -GNinja"
 
 	${CMAKE_BIN_LOC}cmake \
 		-DCMAKE_MODULE_PATH=$LOCAL_PATH/openttd-$VER-$1/cmake \
@@ -96,8 +101,9 @@ export ARCH=$1
 		-DHOST_BINARY_DIR=$LOCAL_PATH/build-tools \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DCMAKE_PREFIX_PATH=$LOCAL_PATH/../../iconv/src/$ARCH/ \
-        -DCMAKE_MAKE_PROGRAM=$NINJA_PATH \
-        -GNinja \
+		"$([ -n "$CMAKE_C_FLAGS_RELWITHDEBINFO" ] && echo -DCMAKE_C_FLAGS_RELWITHDEBINFO="$CMAKE_C_FLAGS_RELWITHDEBINFO")" \
+		"$([ -n "$CMAKE_CXX_FLAGS_RELWITHDEBINFO" ] && echo -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="$CMAKE_CXX_FLAGS_RELWITHDEBINFO")" \
+		$NINJA_ARGS \
 		-B ./openttd-$VER-$1 -S ./src
 
 } || exit 1

@@ -31,10 +31,17 @@ jobs:
       APP_NAME: sdl2-demo
       # It takes one hour per one architecture to build Boost and ICU libraries, and Github limits CI script duration to 6 hours
       ARCH_LIST: armeabi-v7a arm64-v8a x86 x86_64
+      ANDROID_BUILD_TOOLS: 33.0.2
 
     runs-on: ubuntu-latest
 
     steps:
+      - name: Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+
       - name: Check out the repository
         uses: actions/checkout@v2
         with:
@@ -57,46 +64,6 @@ jobs:
         run: |
           sed -i "s/MultiABI=.*/MultiABI='${ARCH_LIST}'/g" project/jni/application/src/AndroidAppSettings.cfg
 
-#      - name: Get Boost revision
-#        id: boost-rev
-#        run: echo "::set-output name=BOOST_REV::`git -C project/jni/boost/src rev-parse HEAD`"
-#
-#      - name: Get ICU revision
-#        id: icu-rev
-#        run: echo "::set-output name=ICU_REV::`git -C project/jni/iconv/src rev-parse HEAD`"
-#
-#      - name: Copy Boost libraries from cache
-#        uses: actions/cache@v2
-#        id: cache-boost
-#        with:
-#          # The same SDL revision will produce the same libraries
-#          key: ${{steps.boost-rev.outputs.BOOST_REV}}
-#          path: |
-#            build-android/project/jni/boost/include
-#            build-android/project/jni/boost/lib
-#
-#      - name: Copy ICU libraries from cache
-#        uses: actions/cache@v2
-#        id: cache-icu
-#        with:
-#          # The same SDL revision will produce the same libraries
-#          key: ${{steps.icu-rev.outputs.ICU_REV}}
-#          path: |
-#            build-android/project/jni/iconv/include
-#            build-android/project/jni/iconv/lib
-#            build-android/project/jni/icuuc/include
-#            build-android/project/jni/icuuc/lib
-#
-#      - name: Touch cached Boost timestamps
-#        if: steps.cache-boost.outputs.cache-hit == 'true' || steps.cache-icu.outputs.cache-hit == 'true'
-#        working-directory: build-android
-#        run: touch project/jni/boost/lib/*/* || true
-#
-#      - name: Touch cached ICU timestamps
-#        if: steps.cache-boost.outputs.cache-hit == 'true' || steps.cache-icu.outputs.cache-hit == 'true'
-#        working-directory: build-android
-#        run: touch project/jni/iconv/lib/*/* project/jni/icuuc/lib/*/* || true
-
       - name: Patch Java files and build Boost, ICU, and OpenSSL
         run: |
           export PATH=$ANDROID_NDK_LATEST_HOME:$PATH
@@ -115,7 +82,7 @@ jobs:
 
       - name: Hyper turbo build script GOOOOOOOOOOOO
         run: |
-          export PATH=$ANDROID_NDK_LATEST_HOME:$ANDROID_SDK_ROOT/build-tools/31.0.0:$PATH
+          export PATH=$ANDROID_NDK_LATEST_HOME:$ANDROID_SDK_ROOT/build-tools/$ANDROID_BUILD_TOOLS:$PATH
           ./build.sh
 
       - name: App signing keys
@@ -130,7 +97,7 @@ jobs:
 
       - name: Package
         run: |
-          export PATH=$ANDROID_NDK_LATEST_HOME:$ANDROID_SDK_ROOT/build-tools/31.0.0:$PATH
+          export PATH=$ANDROID_NDK_LATEST_HOME:$ANDROID_SDK_ROOT/build-tools/$ANDROID_BUILD_TOOLS:$PATH
           if [ -e keystore.jks ]; then
           export ANDROID_KEYSTORE_FILE=`pwd`/keystore.jks
           fi

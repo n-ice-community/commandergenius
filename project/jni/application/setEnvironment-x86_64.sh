@@ -6,7 +6,7 @@ IFS='
 NDK=${ANDROID_NDK_HOME:-$(dirname $(which ndk-build))}
 
 if uname -s | grep -i "linux" > /dev/null ; then
-	MYARCH=linux-$(arch)
+	MYARCH=linux-$(uname -m)
 	NDK=`readlink -f $NDK`
 elif uname -s | grep -i "darwin" > /dev/null ; then
 	MYARCH=darwin-x86_64
