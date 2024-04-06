@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+set -x
 AUTO=a
 CHANGED=
 JAVA_SRC_PATH=project/java
@@ -904,7 +905,7 @@ if [ -z "$ANDROID_NDK_HOME" ]; then
 	echo "Set ANDROID_NDK_HOME env variable, or put ndk-build into your PATH"
 	exit 1
 fi
-NDK_VER=$(echo ${ANDROID_NDK_HOME} | grep -Eo '[^/]+$')
+NDK_VER=$(grep -Po "(?<=Pkg.Revision = )[0-9.]+" ${ANDROID_NDK_HOME}/source.properties)
 
 cat project/app/build-template.gradle | \
 	sed 's/applicationId .*/applicationId "'"${AppFullName}"'"/' | \

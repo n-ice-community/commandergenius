@@ -69,7 +69,9 @@ CURL_HEADERS := \
 	typecheck-gcc.h
 
 # Hide libcurl from the project if openssl is not compiled
-ifneq ($(filter ssl, $(APP_MODULES)),)
+ifeq ($(filter ssl, $(APP_MODULES)),)
+$(info Curl requires a SSL library, but none included.)
+else
 
 LOCAL_SRC_FILES := $(addprefix lib/,$(CSOURCES))
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include/ $(LOCAL_PATH)/lib $(LOCAL_PATH)/../openssl/include

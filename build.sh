@@ -2,6 +2,7 @@
 
 # Handle any error or die
 set -e
+set -x
 
 THIS_BUILD_DIR=$(dirname "$0")
 install_apk=false
@@ -133,7 +134,7 @@ if [ -x project/jni/application/src/AndroidPreBuild.sh ]; then
 fi
 
 if grep -q 'CustomBuildScript=y' ./AndroidAppSettings.cfg; then
-	${ANDROID_NDK_HOME}/ndk-build -C project -j$NCPU V=1 CUSTOM_BUILD_SCRIPT_FIRST_PASS=1 NDK_APP_STRIP_MODE=none
+	NDK_LOG=1 ${ANDROID_NDK_HOME}/ndk-build -C project -j$NCPU V=1 CUSTOM_BUILD_SCRIPT_FIRST_PASS=1 NDK_APP_STRIP_MODE=none
 	make -C project/jni/application -f CustomBuildScript.mk
 fi
 

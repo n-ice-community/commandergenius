@@ -6,7 +6,7 @@
 [submodule "project/jni/application/openttd/src"]
 	path = project/jni/application/openttd/src
 	url = https://github.com/n-ice-community/openttd-android.git
-	branch = 13
+	branch = 14
 [submodule "project/jni/sdl2"]
 	path = project/jni/sdl2
 	url = https://github.com/libsdl-org/SDL.git
