@@ -22,9 +22,16 @@ if which realpath > /dev/null ; then
 else
 	LOCAL_PATH=`cd $LOCAL_PATH && pwd`
 fi
-ARCH=x86_64
-GCCPREFIX=x86_64-linux-android
-APILEVEL=24
+ARCH=armeabi-v7a
+GCCPREFIX=armv7a-linux-androideabi
+BINUTILSPREFIX=arm-linux-androideabi
+<<<<<<< HEAD
+APILEVEL=21
+||||||| 798fd0f5e
+APILEVEL=16
+=======
+APILEVEL=19
+>>>>>>> upstream/sdl_android
 
 APP_MODULES=`grep 'APP_MODULES [:][=]' $LOCAL_PATH/../Settings.mk | sed 's@.*[=]\(.*\)@\1@' | sed 's@\b\(application\|sdl_main\|sdl_native_helpers\|c++_shared\)\b@@g'`
 
@@ -71,6 +78,7 @@ CFLAGS="
 -funwind-tables
 -fstack-protector-strong
 -no-canonical-prefixes
+-mthumb
 -Wformat
 -Werror=format-security
 -Oz
@@ -90,6 +98,7 @@ LDFLAGS="
 -funwind-tables
 -fstack-protector-strong
 -no-canonical-prefixes
+-mthumb
 -Wformat
 -Werror=format-security
 -Oz
@@ -109,6 +118,7 @@ $APP_SHARED_LIBS
 -llog
 -latomic
 -lm
+-ldl
 $LDFLAGS"
 
 LDFLAGS="`echo $LDFLAGS | tr '\n' ' '`"

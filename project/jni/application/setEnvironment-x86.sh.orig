@@ -22,9 +22,15 @@ if which realpath > /dev/null ; then
 else
 	LOCAL_PATH=`cd $LOCAL_PATH && pwd`
 fi
-ARCH=x86_64
-GCCPREFIX=x86_64-linux-android
-APILEVEL=24
+ARCH=x86
+GCCPREFIX=i686-linux-android
+<<<<<<< HEAD
+APILEVEL=21
+||||||| 798fd0f5e
+APILEVEL=16
+=======
+APILEVEL=19
+>>>>>>> upstream/sdl_android
 
 APP_MODULES=`grep 'APP_MODULES [:][=]' $LOCAL_PATH/../Settings.mk | sed 's@.*[=]\(.*\)@\1@' | sed 's@\b\(application\|sdl_main\|sdl_native_helpers\|c++_shared\)\b@@g'`
 
@@ -67,8 +73,8 @@ APP_MODULES_INCLUDE="`echo $APP_MODULES | sed \"s@\([-a-zA-Z0-9_.]\+\)@-isystem$
 CFLAGS="
 -g
 -ffunction-sections
--fdata-sections
 -funwind-tables
+-fdata-sections
 -fstack-protector-strong
 -no-canonical-prefixes
 -Wformat

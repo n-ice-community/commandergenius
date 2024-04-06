@@ -2,7 +2,6 @@
 
 # Handle any error or die
 set -e
-set -x
 
 THIS_BUILD_DIR=$(dirname "$0")
 install_apk=false

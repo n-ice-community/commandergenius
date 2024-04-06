@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
-set -x
+
 AUTO=a
 CHANGED=
 JAVA_SRC_PATH=project/java
@@ -433,7 +433,8 @@ NDK_TOOLCHAIN_VERSION=$NDK_TOOLCHAIN_VERSION
 # Android platform version.
 # android-16 = Android 4.1, the earliest supported version in NDK r18.
 # android-18 = Android 4.3, the first version supporting GLES3.
-# android-21 = Android 5.1, the first version with SO_REUSEPORT defined.
+# android-21 = Android 5.1, the first version with SO_REUSEPORT defined, also minimum version for Google Play Services since Aug. 2023 https://android-developers.googleblog.com/2023/07/google-play-services-discontinuing-updates-for-kitkat.html
+# android-24 = Android 7.0, the first version with ifaddrs.h (needed for getifaddrs)
 APP_PLATFORM=$APP_PLATFORM
 
 # Specify architectures to compile, 'all' or 'y' to compile for all architectures.
