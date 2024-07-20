@@ -11,7 +11,7 @@
 #  1. The origin of this software must not be misrepresented; you must not
 #     claim that you wrote the original software. If you use this software
 #     in a product, an acknowledgment in the product documentation would be
-#     appreciated but is not required. 
+#     appreciated but is not required.
 #  2. Altered source versions must be plainly marked as such, and must not be
 #     misrepresented as being the original software.
 #  3. This notice may not be removed or altered from any source distribution.
@@ -51,11 +51,14 @@ jobs:
       - name: Check out submodules
         # There are many more submodules in this repo, we don't need them all
         run: >
-          git submodule update --init --recursive --depth=1
+          git submodule update --init --depth=1
           project/jni/application/${APP_NAME}
-          project/jni/boost/src project/jni/iconv/src
+          project/jni/iconv/src
           project/jni/sdl2 project/jni/sdl2_image
           project/jni/sdl2_mixer project/jni/sdl2_ttf
+        run: >
+          git -C project/jni/sdl2_image submodule update --init --depth=1
+          external/jpeg external/libpng
 
       - name: Symlink the application dir
         run: |
