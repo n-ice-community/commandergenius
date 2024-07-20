@@ -50,14 +50,13 @@ jobs:
 
       - name: Check out submodules
         # There are many more submodules in this repo, we don't need them all
-        run: >
-          git submodule update --init --depth=1
-          project/jni/application/${APP_NAME}
-          project/jni/iconv/src
-          project/jni/sdl2 project/jni/sdl2_image
-          project/jni/sdl2_mixer project/jni/sdl2_ttf
-        run: >
-          git -C project/jni/sdl2_image submodule update --init --depth=1
+        run: |
+          git submodule update --init --depth=1 \
+          project/jni/application/${APP_NAME} \
+          project/jni/iconv/src \
+          project/jni/sdl2 project/jni/sdl2_image \
+          project/jni/sdl2_mixer project/jni/sdl2_ttf \
+          git -C project/jni/sdl2_image submodule update --init --depth=1 \
           external/jpeg external/libpng
 
       - name: Symlink the application dir
