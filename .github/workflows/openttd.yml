@@ -55,7 +55,7 @@ jobs:
           project/jni/application/${APP_NAME} \
           project/jni/iconv/src \
           project/jni/sdl2 project/jni/sdl2_image \
-          project/jni/sdl2_mixer project/jni/sdl2_ttf \
+          project/jni/sdl2_mixer project/jni/sdl2_ttf
           git -C project/jni/sdl2_image submodule update --init --depth=1 \
           external/jpeg external/libpng
 
