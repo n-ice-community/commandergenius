@@ -289,13 +289,15 @@ abstract class DifferentTouchInput
 		}
 		public void process(final MotionEvent event)
 		{
-			int hwMouseEvent =  ((event.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE || Globals.ForceHardwareMouse) ? Mouse.MOUSE_HW_INPUT_MOUSE :
-								((event.getSource() & InputDevice.SOURCE_STYLUS) == InputDevice.SOURCE_STYLUS) ? Mouse.MOUSE_HW_INPUT_STYLUS :
-								Mouse.MOUSE_HW_INPUT_FINGER;
-			if( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O )
+			int source = event.getSource();
+			int hwMouseEvent = Mouse.MOUSE_HW_INPUT_FINGER;
+			if (isFromSource(source, InputDevice.SOURCE_MOUSE ) || isFromSource(source, InputDevice.SOURCE_MOUSE ) || Globals.ForceHardwareMouse)
 			{
-				if( (event.getSource() & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE )
-					hwMouseEvent = Mouse.MOUSE_HW_INPUT_MOUSE;
+				hwMouseEvent = Mouse.MOUSE_HW_INPUT_MOUSE;
+			}
+			else if (isFromSource(source, InputDevice.SOURCE_STYLUS ))
+			{
+				hwMouseEvent = Mouse.MOUSE_HW_INPUT_STYLUS;
 			}
 
 			if( ExternalMouseDetected != hwMouseEvent )
@@ -323,8 +325,10 @@ abstract class DifferentTouchInput
 				InputDevice device = InputDevice.getDevice(event.getDeviceId());
 				if( device != null && device.getMotionRange(MotionEvent.AXIS_DISTANCE) != null &&
 					device.getMotionRange(MotionEvent.AXIS_DISTANCE).getRange() > 0.0f )
+					{
 					touchEvents[0].pressure = (int)((event.getAxisValue(MotionEvent.AXIS_DISTANCE) -
 							device.getMotionRange(MotionEvent.AXIS_DISTANCE).getMin()) * Mouse.MAX_PRESSURE / device.getMotionRange(MotionEvent.AXIS_DISTANCE).getRange());
+					}
 				DemoGLSurfaceView.nativeMotionEvent( touchEvents[0].x, touchEvents[0].y, action, 0, touchEvents[0].pressure, touchEvents[0].size );
 			}
 			if( (event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_HOVER_EXIT ) // Update screen for finger hover
@@ -367,7 +371,7 @@ abstract class DifferentTouchInput
 		public void processGenericEvent(final MotionEvent event)
 		{
 			// Joysticks are supported since Honeycomb, but I don't care about it, because very few devices have it
-			if( (event.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) == InputDevice.SOURCE_CLASS_JOYSTICK )
+			if( isFromSource(event.getSource(), InputDevice.SOURCE_CLASS_JOYSTICK ))
 			{
 				// event.getAxisValue(AXIS_HAT_X) and event.getAxisValue(AXIS_HAT_Y) are joystick arrow keys, on Nvidia Shield and some other joysticks
 				DemoGLSurfaceView.nativeGamepadAnalogJoystickInput(
@@ -538,8 +542,7 @@ abstract class DifferentTouchInput
 		if( device == null )
 			return 0;
 		int source = device.getSources();
-		if( (source & InputDevice.SOURCE_CLASS_JOYSTICK) != InputDevice.SOURCE_CLASS_JOYSTICK &&
-			(source & InputDevice.SOURCE_GAMEPAD) != InputDevice.SOURCE_GAMEPAD )
+		if( !isFromSource(source, InputDevice.SOURCE_CLASS_JOYSTICK) && !isFromSource(source, InputDevice.SOURCE_GAMEPAD) )
 		{
 			return 0;
 		}
@@ -601,6 +604,11 @@ abstract class DifferentTouchInput
 			InputManager manager = (InputManager) context.getSystemService(Context.INPUT_SERVICE);
 			manager.registerInputDeviceListener(new Listener(), null);
 		}
+	}
+
+	public static boolean isFromSource(int source, int test)
+	{
+		return (source & test) == test;
 	}
 }
 
@@ -1014,16 +1022,16 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 	public boolean onKeyDown(int keyCode, final KeyEvent event)
 	{
 		//Log.v("SDL", "DemoGLSurfaceView::onKeyDown(): keyCode " + keyCode + " event.getSource() " + event.getSource());
+		int source = event.getSource();
 		if( keyCode == KeyEvent.KEYCODE_BACK )
 		{
 			boolean mouseInput = false;
-			if( (event.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE )
-				mouseInput = true;
-			if( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O )
+			if( DifferentTouchInput.isFromSource(source, InputDevice.SOURCE_MOUSE)
+			 || DifferentTouchInput.isFromSource(source, InputDevice.SOURCE_MOUSE_RELATIVE))
 			{
-				if( (event.getSource() & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE )
-					mouseInput = true;
+				mouseInput = true;
 			}
+
 			if( mouseInput )
 			{
 				// Stupid Samsung and stupid Acer remaps right mouse button to BACK key
@@ -1048,13 +1056,13 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 		if( keyCode == KeyEvent.KEYCODE_BACK )
 		{
 			boolean mouseInput = false;
-			if( (event.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE )
-				mouseInput = true;
-			if( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O )
+			int source = event.getSource();
+			if( DifferentTouchInput.isFromSource(source, InputDevice.SOURCE_MOUSE)
+			 || DifferentTouchInput.isFromSource(source, InputDevice.SOURCE_MOUSE_RELATIVE))
 			{
-				if( (event.getSource() & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE )
-					mouseInput = true;
+				mouseInput = true;
 			}
+
 			if( mouseInput )
 			{
 				// Stupid Samsung and stupid Acer remaps right mouse button to BACK key
@@ -1118,8 +1126,10 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 	@Override
 	public boolean onCapturedPointerEvent (final MotionEvent event)
 	{
-		DifferentTouchInput.capturedMouseX += event.getX();
-		DifferentTouchInput.capturedMouseY += event.getY();
+		float oldX = event.getX();
+		float oldY = event.getY();
+		DifferentTouchInput.capturedMouseX += oldX;
+		DifferentTouchInput.capturedMouseY += oldY;
 		if (DifferentTouchInput.capturedMouseX < 0)
 			DifferentTouchInput.capturedMouseX = 0;
 		if (DifferentTouchInput.capturedMouseY < 0)
@@ -1130,11 +1140,15 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 			DifferentTouchInput.capturedMouseY = this.getHeight() - 1;
 
 		//Log.v("SDL", "SDL DemoGLSurfaceView::onCapturedPointerEvent(): X " + DifferentTouchInput.capturedMouseX + " Y " + DifferentTouchInput.capturedMouseY +
-		//				" W " + this.getWidth() + " H " + this.getHeight() + " getX " + event.getX() + " getY " + event.getY() +
+		//				" W " + this.getWidth() + " H " + this.getHeight() + " getX " + oldX + " getY " + oldY +
 		//				" RelX " + event.getAxisValue(MotionEvent.AXIS_RELATIVE_X) + " RelY " + event.getAxisValue(MotionEvent.AXIS_RELATIVE_Y) );
 
-		event.setLocation(DifferentTouchInput.capturedMouseX, DifferentTouchInput.capturedMouseY);
 		event.setAction(MotionEvent.ACTION_HOVER_MOVE);
+		// Starting with Android 12L setLocation only works for POINTER devices, e.g. touchscreen or touchpads
+		// For the time being with just fake being a touchpad
+		// See https://github.com/robolectric/robolectric/issues/7215
+		event.setSource(InputDevice.SOURCE_MOUSE);
+		event.setLocation(DifferentTouchInput.capturedMouseX, DifferentTouchInput.capturedMouseY);
 
 		int scrollX = Math.round(event.getAxisValue(MotionEvent.AXIS_HSCROLL));
 		int scrollY = Math.round(event.getAxisValue(MotionEvent.AXIS_VSCROLL));
