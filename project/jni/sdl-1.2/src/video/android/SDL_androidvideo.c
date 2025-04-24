@@ -91,6 +91,7 @@ static jmethodID JavaRequestRestartMyself = NULL;
 static jmethodID JavaRequestSetConfigOption = NULL;
 static jmethodID JavaSetSystemMousePointerVisible = NULL;
 static jmethodID JavaSetCapturedMousePosition = NULL;
+static jmethodID JavaGetDisplayMetrics = NULL;
 static int glContextLost = 0;
 static int showScreenKeyboardDeferred = 0;
 static const char * showScreenKeyboardOldText = "";
@@ -398,6 +399,7 @@ JAVA_EXPORT_NAME(DemoRenderer_nativeInitJavaCallbacks) ( JNIEnv*  env, jobject t
 	JavaRequestSetConfigOption = (*JavaEnv)->GetMethodID(JavaEnv, JavaRendererClass, "setConfigOptionFromSDL", "(II)V");
 	JavaSetSystemMousePointerVisible = (*JavaEnv)->GetMethodID(JavaEnv, JavaRendererClass, "setSystemMousePointerVisible", "(I)V");
 	JavaSetCapturedMousePosition = (*JavaEnv)->GetMethodID(JavaEnv, JavaRendererClass, "setCapturedMousePosition", "(II)V");
+	JavaGetDisplayMetrics = (*JavaEnv)->GetMethodID(JavaEnv, JavaRendererClass, "getDisplayMetrics", "()[F");
 
 	ANDROID_InitOSKeymap();
 }
@@ -669,6 +671,19 @@ void SDLCALL SDL_ANDROID_SetCapturedMousePosition(int x, int y)
 {
 	JNIEnv *JavaEnv = GetJavaEnv();
 	(*JavaEnv)->CallVoidMethod( JavaEnv, JavaRenderer, JavaSetCapturedMousePosition, (jint)x, (jint)y );
+}
+
+simpleDisplayMetrics_t SDLCALL SDL_ANDROID_GetDisplayMetrics()
+{
+	jfloat *vals;
+	JNIEnv *JavaEnv = GetJavaEnv();
+	jfloatArray res = (jfloatArray)(*JavaEnv)->CallObjectMethod( JavaEnv, JavaRenderer, JavaGetDisplayMetrics);
+	vals = (*JavaEnv)->GetFloatArrayElements(JavaEnv, res, NULL);
+	simpleDisplayMetrics_t ret = {.width = vals[0], .height = vals[1], .density = vals[2]};
+
+	(*JavaEnv)->ReleaseFloatArrayElements(JavaEnv, res, vals, 0);
+
+	return ret;
 }
 
 // Dummy callback for SDL2 to satisfy linker

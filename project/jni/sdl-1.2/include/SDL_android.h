@@ -161,6 +161,14 @@ extern DECLSPEC int SDLCALL SDL_ANDROID_GetMouseEmulationMode();
 /* Control the System mouse pointer visibility */
 extern DECLSPEC void SDLCALL SDL_ANDROID_SetSystemMousePointerVisible(int visible);
 
+typedef struct {
+    int width;
+    int height;
+    float density;
+} simpleDisplayMetrics_t;
+
+extern DECLSPEC simpleDisplayMetrics_t SDLCALL SDL_ANDROID_GetDisplayMetrics();
+
 #ifdef __cplusplus
 }
 #endif

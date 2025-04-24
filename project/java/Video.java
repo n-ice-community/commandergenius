@@ -55,6 +55,7 @@ import android.view.KeyEvent;
 import android.view.InputDevice;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.WindowMetrics;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.graphics.Bitmap;
@@ -851,6 +852,42 @@ class DemoRenderer extends GLSurfaceView_SDL.Renderer
 	{
 		DifferentTouchInput.capturedMouseX = x;
 		DifferentTouchInput.capturedMouseY = y;
+	}
+
+	public float[] getDisplayMetrics() // Called from native code
+	{
+		final int WIDTH = 0;
+		final int HEIGHT = 1;
+		final int DENSITY = 2;
+		float[] res = new float[3];
+		DisplayMetrics metrics = new DisplayMetrics();
+		Display display = MainActivity.instance.getWindowManager().getDefaultDisplay();
+
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R)
+		{
+			WindowMetrics windowMetrics = MainActivity.instance.getWindowManager().getCurrentWindowMetrics();
+			Rect bounds = windowMetrics.getBounds();
+			res[WIDTH] = bounds.width();
+			res[HEIGHT] = bounds.height();
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+			{
+				res[DENSITY] = windowMetrics.getDensity();
+			}
+			else
+			{
+				display.getRealMetrics(metrics);
+				res[DENSITY] = metrics.density;
+			}
+		}
+		else
+		{
+			display.getRealMetrics(metrics);
+			res[WIDTH] = metrics.widthPixels;
+			res[HEIGHT] = metrics.heightPixels;
+			res[DENSITY] = metrics.density;
+		}
+
+		return res;
 	}
 
 	public void exitApp()
