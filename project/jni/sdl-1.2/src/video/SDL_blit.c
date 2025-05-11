@@ -35,7 +35,7 @@
 #endif
 #endif
 
-#if defined(MMX_ASMBLIT)
+#if defined(MMX_ASMBLIT) || defined(SSE_ASMBLIT)
 #include "SDL_cpuinfo.h"
 #include "mmx.h"
 #endif
@@ -280,11 +280,11 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 			video->CheckHWBlit(this, surface, surface->map->dst);
 		}
 	}
-	
+
 	/* if an alpha pixel format is specified, we can accelerate alpha blits */
-	if (((surface->flags & SDL_HWSURFACE) == SDL_HWSURFACE )&&(current_video->displayformatalphapixel)) 
+	if (((surface->flags & SDL_HWSURFACE) == SDL_HWSURFACE )&&(current_video->displayformatalphapixel))
 	{
-		if ( (surface->flags & SDL_SRCALPHA) ) 
+		if ( (surface->flags & SDL_SRCALPHA) )
 			if ( current_video->info.blit_hw_A ) {
 				SDL_VideoDevice *video = current_video;
 				SDL_VideoDevice *this  = current_video;
@@ -353,7 +353,7 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 			        surface->map->sw_blit = SDL_RLEAlphaBlit;
 		}
 	}
-	
+
 	if ( surface->map->sw_blit == NULL ) {
 		surface->map->sw_blit = SDL_SoftBlit;
 	}

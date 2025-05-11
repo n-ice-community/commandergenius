@@ -36,7 +36,7 @@ build() {
 	mkdir -p build/$ARCH
 	cd build/$ARCH
 
-	tar -x -v -z -f ../../openssl-1.1.1j.tar.gz --strip=1
+	tar -x -v -z -f ../../openssl-1.1.1w.tar.gz --strip=1
 	patch -p1 < ../../config.patch || exit 1
 
 	env LDFLAGS="-shared -landroid -llog" \
