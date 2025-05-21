@@ -2,11 +2,6 @@ APP_PROJECT_PATH := $(call my-dir)/..
 
 include jni/Settings.mk
 
-ifneq ($(filter c++_shared, $(APP_MODULES)),)
-APP_STL := c++_shared
-else
-APP_STL := none
-endif
 APP_CFLAGS := -g
 ifneq ($(NDK_DEBUG),1)
 APP_CFLAGS += -Oz -DNDEBUG # -Oz works best with clang

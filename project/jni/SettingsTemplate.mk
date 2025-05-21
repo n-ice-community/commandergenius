@@ -17,6 +17,8 @@ ifeq ($(CUSTOM_BUILD_SCRIPT_FIRST_PASS),)
 APP_MODULES += application $(if $(filter 1.2, $(SDL_VERSION)), sdl_main)
 endif
 
+APP_STL := c++_shared
+
 ifeq ($(APP_ABI),)
 APP_ABI := arm64-v8a armeabi-v7a x86 x86_64
 endif
