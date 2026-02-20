@@ -2,7 +2,7 @@
 
 set -e
 
-VER=15.0-1
+VER=15.2-0
 ARCH=$1
 ANDROID_DATA_FULLPATH=$(realpath ./AndroidData/)
 
