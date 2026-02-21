@@ -13,7 +13,7 @@ freely, subject to the following restrictions:
 1. The origin of this software must not be misrepresented; you must not
    claim that you wrote the original software. If you use this software
    in a product, an acknowledgment in the product documentation would be
-   appreciated but is not required. 
+   appreciated but is not required.
 2. Altered source versions must be plainly marked as such, and must not be
    misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
@@ -132,8 +132,8 @@ public class DummyService extends Service
 			.setTicker(getString(getApplicationInfo().labelRes))
 			.setOngoing(true)
 			.build();
-		PendingIntent killIntent = PendingIntent.getService(this, 5, new Intent(Intent.ACTION_DELETE, null, this, DummyService.class), PendingIntent.FLAG_CANCEL_CURRENT);
-		PendingIntent showIntent = PendingIntent.getActivity(this, 0, new Intent("", null, this, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent killIntent = PendingIntent.getService(this, 5, new Intent(Intent.ACTION_DELETE, null, this, DummyService.class), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+		PendingIntent showIntent = PendingIntent.getActivity(this, 0, new Intent("", null, this, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 		ntf.deleteIntent = killIntent;
 		RemoteViews view = new RemoteViews(getPackageName(), R.layout.notification);
 		view.setCharSequence(R.id.notificationText, "setText", getString(R.string.notification_app_is_running, getString(getApplicationInfo().labelRes)));
